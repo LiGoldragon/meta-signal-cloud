@@ -18,10 +18,25 @@ domain identity.
 - `RotateCredential(Rotation)` changes the credential handle for an existing
   provider account.
 - `SetPolicy(Policy)` replaces the daemon's provider-authority policy.
+- `PreparePlan(PlanPreparation)` asks the daemon to compute a concrete
+  provider plan from a provider-neutral desired state.
 - `ApprovePlan(Approval)` marks a prepared plan as approved for later
   application.
 - `ApplyPlan(Application)` applies a prepared plan.
 - `RetireAccount(Retirement)` removes an account binding.
+
+## Ordinary vs owner split
+
+Per Spirit records 311 and 325 (Maximum certainty, 2026-05-23), the cloud
+surface splits Mutate-class verbs onto this owner contract (privileged) and
+Query-class verbs onto `signal-cloud` (public). `PreparePlan` lives here
+because it mutates daemon-internal plan store state, even though it does not
+mutate external provider state directly. Cloudflare and other provider states
+are treated as external state the cloud daemon reflects.
+
+This is a workspace generalization: a component whose state surface is a
+reflected external resource exposes its read surface on the ordinary contract
+and its mutation surface on the owner contract.
 
 ## Owns
 
