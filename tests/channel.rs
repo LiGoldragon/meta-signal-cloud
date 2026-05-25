@@ -1,16 +1,25 @@
 use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
 use owner_signal_cloud::{
-    AccountRegistered, Application, Approval, CapabilityDirective, CapabilityPolicy,
-    CredentialHandle, Operation, OperationKind, PlanApplied, PlanIdentifier, Policy, Provider,
-    ProviderAccount, Registration, RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
+    AccountRegistered, Application, Approval, Capability, CapabilityDirective, CapabilityPolicy,
+    CredentialHandle, DesiredState, DomainName, Operation, OperationKind, Plan, PlanApplied,
+    PlanIdentifier, PlanPreparation, Policy, Provider, ProviderAccount, Registration,
+    RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
 };
-use signal_cloud::{Capability, DomainName};
 use signal_frame::{RequestPayload, SignalOperationHeads};
 
 fn encode_to_text<T: NotaEncode>(value: &T) -> String {
     let mut encoder = Encoder::new();
     value.encode(&mut encoder).expect("encode");
     encoder.into_string()
+}
+
+fn desired_state() -> DesiredState {
+    DesiredState {
+        provider: Provider::Cloudflare,
+        zone: DomainName::new("goldragon.criome"),
+        records: vec![],
+        redirects: vec![],
+    }
 }
 
 #[test]
@@ -21,6 +30,7 @@ fn operations_are_owner_authority_verbs() {
             "RegisterAccount",
             "RotateCredential",
             "SetPolicy",
+            "PreparePlan",
             "ApprovePlan",
             "ApplyPlan",
             "RetireAccount",
@@ -76,6 +86,20 @@ fn policy_uses_capability_directives_not_boolean_flags() {
 }
 
 #[test]
+fn plan_preparation_round_trips_through_owner_contract() {
+    let operation = Operation::PreparePlan(PlanPreparation {
+        desired_state: desired_state(),
+    });
+
+    assert_eq!(operation.operation_kind(), OperationKind::PreparePlan);
+
+    let text = encode_to_text(&operation);
+    let mut decoder = Decoder::new(&text);
+    let decoded = Operation::decode(&mut decoder).expect("decode");
+    assert_eq!(decoded, operation);
+}
+
+#[test]
 fn reply_round_trips_through_nota() {
     let reply = Reply::AccountRegistered(AccountRegistered {
         provider: Provider::Cloudflare,
@@ -91,6 +115,28 @@ fn reply_round_trips_through_nota() {
 }
 
 #[test]
+fn plan_prepared_reply_carries_public_plan_record() {
+    let reply = Reply::PlanPrepared(Plan {
+        identifier: PlanIdentifier::new("plan-one"),
+        provider: Provider::Cloudflare,
+        zone: DomainName::new("goldragon.criome"),
+        records_to_create: vec![],
+        records_to_update: vec![],
+        record_names_to_delete: vec![],
+        redirects_to_create: vec![],
+        redirects_to_update: vec![],
+        redirect_sources_to_delete: vec![],
+    });
+
+    assert_eq!(reply.kind(), ReplyKind::PlanPrepared);
+
+    let text = encode_to_text(&reply);
+    let mut decoder = Decoder::new(&text);
+    let decoded = Reply::decode(&mut decoder).expect("decode");
+    assert_eq!(decoded, reply);
+}
+
+#[test]
 fn application_and_rejection_replies_are_typed() {
     let applied = Reply::PlanApplied(PlanApplied {
         plan: PlanIdentifier::new("plan-one"),
@@ -98,10 +144,14 @@ fn application_and_rejection_replies_are_typed() {
     assert_eq!(applied.kind(), ReplyKind::PlanApplied);
 
     let rejected = Reply::RequestRejected(RequestRejected {
-        operation: OperationKind::ApplyPlan,
         reason: RejectionReason::PlanNotApproved,
     });
     assert_eq!(rejected.kind(), ReplyKind::RequestRejected);
+
+    let unconfigured = Reply::RequestRejected(RequestRejected {
+        reason: RejectionReason::ProviderNotConfigured,
+    });
+    assert_eq!(unconfigured.kind(), ReplyKind::RequestRejected);
 }
 
 #[test]

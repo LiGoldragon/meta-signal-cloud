@@ -1,13 +1,16 @@
 //! Owner Signal contract for the cloud component.
 //!
 //! This crate carries owner-only provider account, credential-handle, policy,
-//! approval, and application records. It never carries secret bytes.
+//! plan preparation, approval, and application records. It never carries secret
+//! bytes.
 
 use nota_codec::{NotaEnum, NotaRecord, NotaTransparent};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 
-pub use signal_cloud::{Capability, DomainName, PlanIdentifier, Provider, ProviderAccount};
+pub use signal_cloud::{
+    Capability, DesiredState, DomainName, Plan, PlanIdentifier, Provider, ProviderAccount,
+};
 
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaTransparent, Debug, Clone, PartialEq, Eq, Hash,
@@ -68,6 +71,11 @@ pub struct Policy {
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+pub struct PlanPreparation {
+    pub desired_state: DesiredState,
+}
+
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct Approval {
     pub plan: PlanIdentifier,
 }
@@ -122,15 +130,16 @@ pub struct AccountRetired {
 )]
 pub enum RejectionReason {
     CredentialHandleUnknown,
+    ProviderNotConfigured,
     AccountUnknown,
     PlanUnknown,
     PlanNotApproved,
+    PlanGenerationFailed,
     CapabilityUnauthorized,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct RequestRejected {
-    pub operation: OperationKind,
     pub reason: RejectionReason,
 }
 
@@ -139,6 +148,7 @@ signal_channel! {
         operation RegisterAccount(Registration),
         operation RotateCredential(Rotation),
         operation SetPolicy(Policy),
+        operation PreparePlan(PlanPreparation),
         operation ApprovePlan(Approval),
         operation ApplyPlan(Application),
         operation RetireAccount(Retirement),
@@ -147,6 +157,7 @@ signal_channel! {
         AccountRegistered(AccountRegistered),
         CredentialRotated(CredentialRotated),
         PolicySet(PolicySet),
+        PlanPrepared(Plan),
         PlanApproved(PlanApproved),
         PlanApplied(PlanApplied),
         AccountRetired(AccountRetired),

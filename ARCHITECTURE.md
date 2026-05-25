@@ -2,14 +2,16 @@
 
 `owner-signal-cloud` is the owner-only Signal contract for the `cloud`
 component. It controls provider account registration, credential-handle
-rotation, policy changes, and live provider plan application.
+rotation, policy changes, plan preparation, and live provider plan
+application.
 
 ## Boundary
 
-The ordinary `signal-cloud` contract can observe, validate, and prepare
-plans. This owner contract authorizes and applies those plans because live
-provider mutation changes external accounts, paid resources, and public
-domain identity.
+The ordinary `signal-cloud` contract can observe and validate
+provider-neutral desired state. This owner contract prepares, authorizes, and
+applies plans because prepared plans are daemon-owned mutation intent and live
+provider mutation changes external accounts, paid resources, and public domain
+identity.
 
 ## Public Operations
 
@@ -18,8 +20,7 @@ domain identity.
 - `RotateCredential(Rotation)` changes the credential handle for an existing
   provider account.
 - `SetPolicy(Policy)` replaces the daemon's provider-authority policy.
-- `PreparePlan(PlanPreparation)` asks the daemon to compute a concrete
-  provider plan from a provider-neutral desired state.
+- `PreparePlan(PlanPreparation)` writes a provider plan into daemon plan state.
 - `ApprovePlan(Approval)` marks a prepared plan as approved for later
   application.
 - `ApplyPlan(Application)` applies a prepared plan.
