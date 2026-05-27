@@ -11,6 +11,7 @@ use signal_frame::signal_channel;
 pub use signal_cloud::{
     Capability, DesiredState, DomainName, Plan, PlanIdentifier, Provider, ProviderAccount,
 };
+pub use signal_domain_criome::Projection;
 
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaTransparent, Debug, Clone, PartialEq, Eq, Hash,
@@ -73,6 +74,12 @@ pub struct Policy {
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct PlanPreparation {
     pub desired_state: DesiredState,
+}
+
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
+pub struct ProjectionPreparation {
+    pub provider: Provider,
+    pub projection: Projection,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
@@ -149,6 +156,7 @@ signal_channel! {
         operation RotateCredential(Rotation),
         operation SetPolicy(Policy),
         operation PreparePlan(PlanPreparation),
+        operation PrepareProjection(ProjectionPreparation),
         operation ApprovePlan(Approval),
         operation ApplyPlan(Application),
         operation RetireAccount(Retirement),

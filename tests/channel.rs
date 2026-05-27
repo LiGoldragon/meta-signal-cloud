@@ -2,9 +2,10 @@ use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
 use owner_signal_cloud::{
     AccountRegistered, Application, Approval, Capability, CapabilityDirective, CapabilityPolicy,
     CredentialHandle, DesiredState, DomainName, Operation, OperationKind, Plan, PlanApplied,
-    PlanIdentifier, PlanPreparation, Policy, Provider, ProviderAccount, Registration,
-    RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
+    PlanIdentifier, PlanPreparation, Policy, ProjectionPreparation, Provider, ProviderAccount,
+    Registration, RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
 };
+use signal_domain_criome::{Projection, ProjectionQuery, ProjectionScope};
 use signal_frame::{RequestPayload, SignalOperationHeads};
 
 fn encode_to_text<T: NotaEncode>(value: &T) -> String {
@@ -31,6 +32,7 @@ fn operations_are_owner_authority_verbs() {
             "RotateCredential",
             "SetPolicy",
             "PreparePlan",
+            "PrepareProjection",
             "ApprovePlan",
             "ApplyPlan",
             "RetireAccount",
@@ -97,6 +99,23 @@ fn plan_preparation_round_trips_through_owner_contract() {
     let mut decoder = Decoder::new(&text);
     let decoded = Operation::decode(&mut decoder).expect("decode");
     assert_eq!(decoded, operation);
+}
+
+#[test]
+fn projection_preparation_uses_domain_projection_contract() {
+    let operation = Operation::PrepareProjection(ProjectionPreparation {
+        provider: Provider::Cloudflare,
+        projection: Projection {
+            query: ProjectionQuery {
+                domain: signal_domain_criome::DomainName::new("goldragon.criome"),
+                scope: ProjectionScope::PublicRecords,
+            },
+            records: vec![],
+            redirects: vec![],
+        },
+    });
+
+    assert_eq!(operation.operation_kind(), OperationKind::PrepareProjection);
 }
 
 #[test]

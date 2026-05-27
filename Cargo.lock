@@ -160,6 +160,7 @@ dependencies = [
  "nota-codec",
  "rkyv",
  "signal-cloud",
+ "signal-domain-criome",
  "signal-frame",
 ]
 
@@ -289,6 +290,16 @@ dependencies = [
 name = "signal-cloud"
 version = "0.1.0"
 source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#eb93c663ff415db538d7aeed1fe53830f5594f50"
+dependencies = [
+ "nota-codec",
+ "rkyv",
+ "signal-frame",
+]
+
+[[package]]
+name = "signal-domain-criome"
+version = "0.1.0"
+source = "git+https://github.com/LiGoldragon/signal-domain-criome.git?branch=main#a89e36f06994ca28ce512e1bc059ac60e7c189e2"
 dependencies = [
  "nota-codec",
  "rkyv",
