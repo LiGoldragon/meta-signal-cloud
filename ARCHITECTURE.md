@@ -3,7 +3,8 @@
 `owner-signal-cloud` is the owner-only Signal contract for the `cloud`
 component. It controls provider account registration, credential-handle
 rotation, policy changes, plan preparation, and live provider plan
-application.
+application. It also accepts provider-neutral projections from `domain-criome`
+and turns them into daemon-held provider plans.
 
 ## Boundary
 
@@ -21,6 +22,9 @@ identity.
   provider account.
 - `SetPolicy(Policy)` replaces the daemon's provider-authority policy.
 - `PreparePlan(PlanPreparation)` writes a provider plan into daemon plan state.
+- `PrepareProjection(ProjectionPreparation)` accepts a `signal-domain-criome`
+  projection and lets `cloud` lower it into a provider plan under owner
+  authority.
 - `ApprovePlan(Approval)` marks a prepared plan as approved for later
   application.
 - `ApplyPlan(Application)` applies a prepared plan.
@@ -58,4 +62,6 @@ and its mutation surface on the owner contract.
 
 - Depend on `signal-frame`, not deprecated `signal-core`.
 - Reuse public provider/domain/plan types from `signal-cloud`.
+- Reuse provider-neutral projection types from `signal-domain-criome` at the
+  cloud/domain handoff boundary.
 - Do not expose raw provider credential bytes.
