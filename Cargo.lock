@@ -38,12 +38,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
 
 [[package]]
-name = "camino"
-version = "1.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e629a66d692cb9ff1a1c664e41771b3dcaf961985a9774c0eb0bd1b51cf60a48"
-
-[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -108,6 +102,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "libc"
+version = "0.2.186"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
+
+[[package]]
+name = "meta-signal-cloud"
+version = "0.1.0"
+dependencies = [
+ "nota-next",
+ "rkyv",
+ "schema-next",
+ "schema-rust-next",
+]
+
+[[package]]
 name = "munge"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,19 +138,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "nota-codec"
+name = "nota-next"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/nota-codec.git?branch=main#d00fbf53808f941a173bfe473ca062e13029339e"
+source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#b33b5b51ce10aa7f44027b7290bfe008c90e7ce5"
 dependencies = [
- "camino",
- "nota-derive",
- "thiserror",
+ "nota-next-derive",
+ "rkyv",
 ]
 
 [[package]]
-name = "nota-derive"
+name = "nota-next-derive"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/nota-derive.git?branch=main#cde0e8262f2f90afbdf26d9b1b3561376723d816"
+source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#b33b5b51ce10aa7f44027b7290bfe008c90e7ce5"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -152,23 +161,6 @@ name = "once_cell"
 version = "1.21.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
-
-[[package]]
-name = "owner-signal-cloud"
-version = "0.1.0"
-dependencies = [
- "nota-codec",
- "rkyv",
- "signal-cloud",
- "signal-domain-criome",
- "signal-frame",
-]
-
-[[package]]
-name = "paste"
-version = "1.0.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "pin-project-lite"
@@ -224,6 +216,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "redb"
+version = "2.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8eca1e9d98d5a7e9002d0013e18d5a9b000aee942eb134883a82f06ebffb6c01"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "rend"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -269,66 +270,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
 
 [[package]]
-name = "schema"
+name = "schema-next"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/schema.git?branch=main#bfe4ff40a1dca39cbc55f8cd5785a06ff2497abd"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#711b5fc9fe8809336c7fc54d90c1aa40cf614cc6"
 dependencies = [
- "nota-codec",
-]
-
-[[package]]
-name = "schema-rust"
-version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#a03b3c4cac9ab5eaabb88207c195134687ad1ba8"
-dependencies = [
- "proc-macro2",
- "quote",
- "schema",
-]
-
-[[package]]
-name = "signal-cloud"
-version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#eb93c663ff415db538d7aeed1fe53830f5594f50"
-dependencies = [
- "nota-codec",
+ "nota-next",
+ "redb",
  "rkyv",
- "signal-frame",
 ]
 
 [[package]]
-name = "signal-domain-criome"
+name = "schema-rust-next"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-domain-criome.git?branch=main#a89e36f06994ca28ce512e1bc059ac60e7c189e2"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#a789a85e71b0c7b60402ca68c5ac553d6ca65a5c"
 dependencies = [
- "nota-codec",
- "rkyv",
- "signal-frame",
-]
-
-[[package]]
-name = "signal-frame"
-version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#a03b3c4cac9ab5eaabb88207c195134687ad1ba8"
-dependencies = [
- "nota-codec",
- "paste",
- "rkyv",
- "signal-frame-macros",
- "thiserror",
-]
-
-[[package]]
-name = "signal-frame-macros"
-version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#a03b3c4cac9ab5eaabb88207c195134687ad1ba8"
-dependencies = [
- "nota-codec",
- "proc-macro2",
- "quote",
- "schema",
- "schema-rust",
- "syn",
+ "schema-next",
 ]
 
 [[package]]
@@ -355,26 +311,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "thiserror"
-version = "2.0.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4288b5bcbc7920c07a1149a35cf9590a2aa808e0bc1eafaade0b80947865fbc4"
-dependencies = [
- "thiserror-impl",
-]
-
-[[package]]
-name = "thiserror-impl"
-version = "2.0.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebc4ee7f67670e9b64d05fa4253e753e016c6c95ff35b89b7941d6b856dec1d5"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "tinyvec"
 version = "1.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -397,9 +333,9 @@ checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
 
 [[package]]
 name = "uuid"
-version = "1.23.1"
+version = "1.23.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddd74a9687298c6858e9b88ec8935ec45d22e8fd5e6394fa1bd4e99a87789c76"
+checksum = "d258b83ceec21034727ecee8c382cfa6c3e133699b0742c64571814fb420c9f7"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
