@@ -315,7 +315,7 @@ dependencies = [
 [[package]]
 name = "schema-next"
 version = "0.1.1"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#3f7813cfc7eecb45d372db57650d3558d1362f18"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#b14d14f7eca58ca2c7104730ce71a7e523e0eb3d"
 dependencies = [
  "nota-next",
  "redb",
@@ -335,7 +335,7 @@ dependencies = [
 [[package]]
 name = "schema-rust-next"
 version = "0.1.3"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#8281dee8a4fa9d737636e533614e33ab7ce48562"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#c4fb5578871a7287973347962a21af71317cfbd2"
 dependencies = [
  "schema-next",
  "thiserror",
@@ -344,7 +344,7 @@ dependencies = [
 [[package]]
 name = "signal-cloud"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#90ab4f4216c9970be521efcd2614178306f6b283"
+source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#fc1a3a32a819069d1920d5efb3b8ff2442770e9a"
 dependencies = [
  "nota-codec",
  "rkyv",
