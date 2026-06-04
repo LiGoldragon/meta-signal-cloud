@@ -1,5 +1,5 @@
 {
-  description = "owner-signal-cloud — owner cloud provider Signal contract";
+  description = "meta-signal-cloud — owner cloud provider Signal contract";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -68,7 +68,7 @@
         };
 
         devShells.default = pkgs.mkShell {
-          name = "owner-signal-cloud";
+          name = "meta-signal-cloud";
           packages = [
             pkgs.jujutsu
             toolchain

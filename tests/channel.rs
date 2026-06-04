@@ -1,10 +1,10 @@
-use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
-use owner_signal_cloud::{
+use meta_signal_cloud::{
     AccountRegistered, Application, Approval, Capability, CapabilityDirective, CapabilityPolicy,
     CredentialHandle, DesiredState, DomainName, Operation, OperationKind, Plan, PlanApplied,
     PlanIdentifier, PlanPreparation, Policy, ProjectionPreparation, Provider, ProviderAccount,
     Registration, RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
 };
+use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
 use signal_domain_criome::{Projection, ProjectionQuery, ProjectionScope};
 use signal_frame::{RequestPayload, SignalOperationHeads};
 

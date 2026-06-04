@@ -1,6 +1,6 @@
-//! Owner Signal contract for the cloud component.
+//! Meta Signal contract for the cloud component.
 //!
-//! This crate carries owner-only provider account, credential-handle, policy,
+//! This crate carries meta (owner-only policy) provider account, credential-handle, policy,
 //! plan preparation, approval, and application records. It never carries secret
 //! bytes.
 

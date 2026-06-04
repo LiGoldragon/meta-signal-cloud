@@ -1,14 +1,16 @@
 [package]
-name         = "owner-signal-cloud"
+name         = "meta-signal-cloud"
 version      = "0.1.0"
 edition      = "2024"
 rust-version = "1.85"
 license      = "MIT OR Apache-2.0"
-description  = "Owner Signal contract for cloud provider API authority and policy."
+description  = "Meta Signal contract for cloud provider API authority and policy."
 publish      = false
+links        = "meta-signal-cloud"
+build        = "build.rs"
 
 [lib]
-name = "owner_signal_cloud"
+name = "meta_signal_cloud"
 path = "src/lib.rs"
 
 [dependencies]
@@ -17,6 +19,9 @@ rkyv         = { version = "0.8", default-features = false, features = ["std", "
 signal-cloud         = { git = "https://github.com/LiGoldragon/signal-cloud.git", branch = "main" }
 signal-domain-criome = { git = "https://github.com/LiGoldragon/signal-domain-criome.git", branch = "main" }
 signal-frame         = { git = "https://github.com/LiGoldragon/signal-frame.git", branch = "main" }
+
+[build-dependencies]
+schema-rust-next = { git = "https://github.com/LiGoldragon/schema-rust-next.git", branch = "main" }
 
 [lints.rust]
 unsafe_code = "forbid"

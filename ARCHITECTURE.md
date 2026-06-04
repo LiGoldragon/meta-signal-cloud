@@ -1,6 +1,6 @@
-# owner-signal-cloud Architecture
+# meta-signal-cloud Architecture
 
-`owner-signal-cloud` is the owner-only Signal contract for the `cloud`
+`meta-signal-cloud` is the meta (owner-only policy) Signal contract for the `cloud`
 component. It controls provider account registration, credential-handle
 rotation, policy changes, plan preparation, and live provider plan
 application. It also accepts provider-neutral projections from `domain-criome`
@@ -9,7 +9,7 @@ and turns them into daemon-held provider plans.
 ## Boundary
 
 The ordinary `signal-cloud` contract can observe and validate
-provider-neutral desired state. This owner contract prepares, authorizes, and
+provider-neutral desired state. This meta contract prepares, authorizes, and
 applies plans because prepared plans are daemon-owned mutation intent and live
 provider mutation changes external accounts, paid resources, and public domain
 identity.
@@ -33,7 +33,7 @@ identity.
 ## Ordinary vs owner split
 
 Per Spirit records 311 and 325 (Maximum certainty, 2026-05-23), the cloud
-surface splits Mutate-class verbs onto this owner contract (privileged) and
+surface splits Mutate-class verbs onto this meta contract (privileged) and
 Query-class verbs onto `signal-cloud` (public). `PreparePlan` lives here
 because it mutates daemon-internal plan store state, even though it does not
 mutate external provider state directly. Cloudflare and other provider states
@@ -41,7 +41,7 @@ are treated as external state the cloud daemon reflects.
 
 This is a workspace generalization: a component whose state surface is a
 reflected external resource exposes its read surface on the ordinary contract
-and its mutation surface on the owner contract.
+and its mutation surface on the meta contract.
 
 ## Owns
 
