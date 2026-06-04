@@ -11,53 +11,6 @@
   ApplyPlan Application
   RetireAccount Retirement
 
-  NexusWork [SignalArrived SemaWriteCompleted SemaReadCompleted EffectCompleted]
-  SignalArrived Input
-  SemaWriteCompleted SemaWriteOutput
-  SemaReadCompleted SemaReadOutput
-  EffectCompleted NexusEffectResult
-
-  NexusAction [CommandSemaWrite CommandSemaRead ReplyToSignal CommandEffect Continue]
-  CommandSemaWrite SemaWriteInput
-  CommandSemaRead SemaReadInput
-  ReplyToSignal Output
-  CommandEffect NexusEffectCommand
-  Continue NexusWork
-
-  NexusEffectCommand [CloudflareApplyPlan]
-  CloudflareApplyPlan ProviderApplyRequest
-  NexusEffectResult [CloudflareApplied]
-  CloudflareApplied ProviderApplyResult
-
-  ProviderApplyRequest { Plan * DatabaseMarker * }
-  ProviderApplyResult { PlanIdentifier * DatabaseMarker * }
-
-  SemaWriteInput [RegisterAccount RotateCredential SetPolicy PreparePlan PrepareProjection ApprovePlan ApplyPlan RetireAccount]
-  SemaReadInput [ObservePlan]
-  ObservePlan PlanIdentifier
-
-  SemaWriteOutput [AccountRegistered CredentialRotated PolicySet PlanPrepared PlanApproved PlanApplied AccountRetired]
-  SemaReadOutput [PlanObserved Missed]
-  PlanObserved ObservedPlan
-  Missed RejectionReport
-
-  ObservedPlan { Plan * DatabaseMarker * }
-  RejectionReport { RejectionReason * DatabaseMarker * }
-
-  Registration { Provider * ProviderAccount * CredentialHandle * }
-  Rotation { Provider * ProviderAccount * CredentialHandle * }
-
-  CapabilityDirective [Enable Disable]
-  CapabilityPolicy { Provider * ProviderAccount * Capability * CapabilityDirective * }
-  ZonePolicy { Provider * ProviderAccount * allowed_zones (Vec DomainName) }
-  Policy { zones (Vec ZonePolicy) capabilities (Vec CapabilityPolicy) }
-
-  PlanPreparation { DesiredState * }
-  ProjectionPreparation { Provider * Projection * }
-  Approval { plan PlanIdentifier }
-  Application { plan PlanIdentifier }
-  Retirement { Provider * ProviderAccount * }
-
   AccountRegistered { Provider * ProviderAccount * }
   CredentialRotated { Provider * ProviderAccount * }
   PolicySet { capability_policy_count Integer zone_policy_count Integer }
@@ -65,10 +18,21 @@
   PlanApproved { plan PlanIdentifier }
   PlanApplied { plan PlanIdentifier }
   AccountRetired { Provider * ProviderAccount * }
-
-  RejectionReason [CredentialHandleUnknown ProviderNotConfigured AccountUnknown PlanUnknown PlanNotApproved PlanGenerationFailed CapabilityUnauthorized]
   RequestRejected { RejectionReason * DatabaseMarker * }
 
+  Registration { Provider * ProviderAccount * CredentialHandle * }
+  Rotation { Provider * ProviderAccount * CredentialHandle * }
+  CapabilityDirective [Enable Disable]
+  CapabilityPolicy { Provider * ProviderAccount * Capability * CapabilityDirective * }
+  ZonePolicy { Provider * ProviderAccount * allowed_zones (Vec DomainName) }
+  Policy { zones (Vec ZonePolicy) capabilities (Vec CapabilityPolicy) }
+  PlanPreparation { DesiredState * }
+  ProjectionPreparation { Provider * Projection * }
+  Approval { plan PlanIdentifier }
+  Application { plan PlanIdentifier }
+  Retirement { Provider * ProviderAccount * }
+
+  RejectionReason [CredentialHandleUnknown ProviderNotConfigured AccountUnknown PlanUnknown PlanNotApproved PlanGenerationFailed CapabilityUnauthorized]
   Plan {
     identifier PlanIdentifier
     Provider *
@@ -89,7 +53,6 @@
   Projection { ProjectionQuery * records (Vec DomainNameSystemRecord) redirects (Vec RedirectRule) }
   ProjectionQuery { domain DomainName ProjectionScope * }
   ProjectionScope [PublicRecords AllRecords]
-
   DomainNameSystemRecord { name DomainName RecordKind * content RecordContent }
   RedirectRule { source DomainName target DomainName RedirectStatus * }
   RecordKind [Address AddressSix CanonicalName MailExchange Text Service]
@@ -102,7 +65,6 @@
   CredentialHandle String
   DomainName String
   PlanIdentifier String
-
   CommitSequence Integer
   StateDigest Integer
   DatabaseMarker { CommitSequence * StateDigest * }

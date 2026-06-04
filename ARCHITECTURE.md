@@ -65,3 +65,25 @@ and its mutation surface on the owner contract.
 - Reuse provider-neutral projection types from `signal-domain-criome` at the
   cloud/domain handoff boundary.
 - Do not expose raw provider credential bytes.
+
+## Schema-derived stack (next branch)
+
+The hand-written `signal_channel!` macro contract is retired on `next`. The
+wire types are derived from `schema/meta-signal-cloud.schema`, lowered by
+`schema-next` into `schema/meta-signal-cloud.asschema`, and emitted as
+checked-in Rust by `schema-rust-next` into `src/schema/meta_signal_cloud.rs`.
+`build.rs` verifies the checked-in artifacts and can refresh them when
+`META_SIGNAL_CLOUD_UPDATE_SCHEMA_ARTIFACTS=1` is set.
+
+### Schema roots
+
+- `Input [RegisterAccount RotateCredential SetPolicy PreparePlan
+  PrepareProjection ApprovePlan ApplyPlan RetireAccount]`.
+- `Output [AccountRegistered CredentialRotated PolicySet PlanPrepared
+  PlanApproved PlanApplied AccountRetired RequestRejected]`.
+
+That is the complete plane set for this repository. Nexus decisions, SEMA
+state, provider effects, and database table schemas are daemon-runtime schemas
+in `cloud`, not contract schema roots here. The carried policy, plan,
+projection, and marker records stay here only because they cross the owner
+Signal wire as operation payloads or replies.

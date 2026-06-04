@@ -28,125 +28,45 @@ pub type RetireAccount = Retirement;
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum NexusWork {
-    SignalArrived(SignalArrived),
-    SemaWriteCompleted(SemaWriteCompleted),
-    SemaReadCompleted(SemaReadCompleted),
-    EffectCompleted(EffectCompleted),
-}
-
-pub type SignalArrived = Input;
-
-pub type SemaWriteCompleted = SemaWriteOutput;
-
-pub type SemaReadCompleted = SemaReadOutput;
-
-pub type EffectCompleted = NexusEffectResult;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum NexusAction {
-    CommandSemaWrite(CommandSemaWrite),
-    CommandSemaRead(CommandSemaRead),
-    ReplyToSignal(ReplyToSignal),
-    CommandEffect(CommandEffect),
-    Continue(Continue),
-}
-
-pub type CommandSemaWrite = SemaWriteInput;
-
-pub type CommandSemaRead = SemaReadInput;
-
-pub type ReplyToSignal = Output;
-
-pub type CommandEffect = NexusEffectCommand;
-
-pub type Continue = NexusWork;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum NexusEffectCommand {
-    CloudflareApplyPlan(CloudflareApplyPlan),
-}
-
-pub type CloudflareApplyPlan = ProviderApplyRequest;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum NexusEffectResult {
-    CloudflareApplied(CloudflareApplied),
-}
-
-pub type CloudflareApplied = ProviderApplyResult;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct ProviderApplyRequest {
-    pub plan: Plan,
-    pub database_marker: DatabaseMarker,
+pub struct AccountRegistered {
+    pub provider: Provider,
+    pub provider_account: ProviderAccount,
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct ProviderApplyResult {
-    pub plan_identifier: PlanIdentifier,
-    pub database_marker: DatabaseMarker,
+pub struct CredentialRotated {
+    pub provider: Provider,
+    pub provider_account: ProviderAccount,
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum SemaWriteInput {
-    RegisterAccount(RegisterAccount),
-    RotateCredential(RotateCredential),
-    SetPolicy(SetPolicy),
-    PreparePlan(PreparePlan),
-    PrepareProjection(PrepareProjection),
-    ApprovePlan(ApprovePlan),
-    ApplyPlan(ApplyPlan),
-    RetireAccount(RetireAccount),
+pub struct PolicySet {
+    pub capability_policy_count: Integer,
+    pub zone_policy_count: Integer,
+}
+
+pub type PlanPrepared = Plan;
+
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct PlanApproved(pub PlanIdentifier);
+
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct PlanApplied(pub PlanIdentifier);
+
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct AccountRetired {
+    pub provider: Provider,
+    pub provider_account: ProviderAccount,
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum SemaReadInput {
-    ObservePlan(ObservePlan),
-}
-
-pub type ObservePlan = PlanIdentifier;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum SemaWriteOutput {
-    AccountRegistered(AccountRegistered),
-    CredentialRotated(CredentialRotated),
-    PolicySet(PolicySet),
-    PlanPrepared(PlanPrepared),
-    PlanApproved(PlanApproved),
-    PlanApplied(PlanApplied),
-    AccountRetired(AccountRetired),
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub enum SemaReadOutput {
-    PlanObserved(PlanObserved),
-    Missed(Missed),
-}
-
-pub type PlanObserved = ObservedPlan;
-
-pub type Missed = RejectionReport;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct ObservedPlan {
-    pub plan: Plan,
-    pub database_marker: DatabaseMarker,
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RejectionReport {
+pub struct RequestRejected {
     pub rejection_reason: RejectionReason,
     pub database_marker: DatabaseMarker,
 }
@@ -226,44 +146,6 @@ pub struct Retirement {
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct AccountRegistered {
-    pub provider: Provider,
-    pub provider_account: ProviderAccount,
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct CredentialRotated {
-    pub provider: Provider,
-    pub provider_account: ProviderAccount,
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct PolicySet {
-    pub capability_policy_count: Integer,
-    pub zone_policy_count: Integer,
-}
-
-pub type PlanPrepared = Plan;
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct PlanApproved(pub PlanIdentifier);
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct PlanApplied(pub PlanIdentifier);
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct AccountRetired {
-    pub provider: Provider,
-    pub provider_account: ProviderAccount,
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum RejectionReason {
     CredentialHandleUnknown,
     ProviderNotConfigured,
@@ -272,13 +154,6 @@ pub enum RejectionReason {
     PlanNotApproved,
     PlanGenerationFailed,
     CapabilityUnauthorized,
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RequestRejected {
-    pub rejection_reason: RejectionReason,
-    pub database_marker: DatabaseMarker,
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -426,6 +301,46 @@ pub enum Output {
     RequestRejected(RequestRejected),
 }
 
+impl PlanApproved {
+    pub fn new(payload: PlanIdentifier) -> Self {
+        Self(payload)
+    }
+
+    pub fn payload(&self) -> &PlanIdentifier {
+        &self.0
+    }
+
+    pub fn into_payload(self) -> PlanIdentifier {
+        self.0
+    }
+}
+
+impl From<PlanIdentifier> for PlanApproved {
+    fn from(payload: PlanIdentifier) -> Self {
+        Self::new(payload)
+    }
+}
+
+impl PlanApplied {
+    pub fn new(payload: PlanIdentifier) -> Self {
+        Self(payload)
+    }
+
+    pub fn payload(&self) -> &PlanIdentifier {
+        &self.0
+    }
+
+    pub fn into_payload(self) -> PlanIdentifier {
+        self.0
+    }
+}
+
+impl From<PlanIdentifier> for PlanApplied {
+    fn from(payload: PlanIdentifier) -> Self {
+        Self::new(payload)
+    }
+}
+
 impl PlanPreparation {
     pub fn new(payload: DesiredState) -> Self {
         Self(payload)
@@ -483,178 +398,6 @@ impl Application {
 impl From<PlanIdentifier> for Application {
     fn from(payload: PlanIdentifier) -> Self {
         Self::new(payload)
-    }
-}
-
-impl PlanApproved {
-    pub fn new(payload: PlanIdentifier) -> Self {
-        Self(payload)
-    }
-
-    pub fn payload(&self) -> &PlanIdentifier {
-        &self.0
-    }
-
-    pub fn into_payload(self) -> PlanIdentifier {
-        self.0
-    }
-}
-
-impl From<PlanIdentifier> for PlanApproved {
-    fn from(payload: PlanIdentifier) -> Self {
-        Self::new(payload)
-    }
-}
-
-impl PlanApplied {
-    pub fn new(payload: PlanIdentifier) -> Self {
-        Self(payload)
-    }
-
-    pub fn payload(&self) -> &PlanIdentifier {
-        &self.0
-    }
-
-    pub fn into_payload(self) -> PlanIdentifier {
-        self.0
-    }
-}
-
-impl From<PlanIdentifier> for PlanApplied {
-    fn from(payload: PlanIdentifier) -> Self {
-        Self::new(payload)
-    }
-}
-
-impl NexusWork {
-    pub fn signal_arrived(payload: SignalArrived) -> Self {
-        Self::SignalArrived(payload)
-    }
-
-    pub fn sema_write_completed(payload: SemaWriteCompleted) -> Self {
-        Self::SemaWriteCompleted(payload)
-    }
-
-    pub fn sema_read_completed(payload: SemaReadCompleted) -> Self {
-        Self::SemaReadCompleted(payload)
-    }
-
-    pub fn effect_completed(payload: EffectCompleted) -> Self {
-        Self::EffectCompleted(payload)
-    }
-}
-
-impl NexusAction {
-    pub fn command_sema_write(payload: CommandSemaWrite) -> Self {
-        Self::CommandSemaWrite(payload)
-    }
-
-    pub fn command_sema_read(payload: CommandSemaRead) -> Self {
-        Self::CommandSemaRead(payload)
-    }
-
-    pub fn reply_to_signal(payload: ReplyToSignal) -> Self {
-        Self::ReplyToSignal(payload)
-    }
-
-    pub fn command_effect(payload: CommandEffect) -> Self {
-        Self::CommandEffect(payload)
-    }
-
-    pub fn r#continue(payload: Continue) -> Self {
-        Self::Continue(payload)
-    }
-}
-
-impl NexusEffectCommand {
-    pub fn cloudflare_apply_plan(payload: CloudflareApplyPlan) -> Self {
-        Self::CloudflareApplyPlan(payload)
-    }
-}
-
-impl NexusEffectResult {
-    pub fn cloudflare_applied(payload: CloudflareApplied) -> Self {
-        Self::CloudflareApplied(payload)
-    }
-}
-
-impl SemaWriteInput {
-    pub fn register_account(payload: RegisterAccount) -> Self {
-        Self::RegisterAccount(payload)
-    }
-
-    pub fn rotate_credential(payload: RotateCredential) -> Self {
-        Self::RotateCredential(payload)
-    }
-
-    pub fn set_policy(payload: SetPolicy) -> Self {
-        Self::SetPolicy(payload)
-    }
-
-    pub fn prepare_plan(payload: PreparePlan) -> Self {
-        Self::PreparePlan(payload)
-    }
-
-    pub fn prepare_projection(payload: PrepareProjection) -> Self {
-        Self::PrepareProjection(payload)
-    }
-
-    pub fn approve_plan(payload: ApprovePlan) -> Self {
-        Self::ApprovePlan(payload)
-    }
-
-    pub fn apply_plan(payload: ApplyPlan) -> Self {
-        Self::ApplyPlan(payload)
-    }
-
-    pub fn retire_account(payload: RetireAccount) -> Self {
-        Self::RetireAccount(payload)
-    }
-}
-
-impl SemaReadInput {
-    pub fn observe_plan(payload: ObservePlan) -> Self {
-        Self::ObservePlan(payload)
-    }
-}
-
-impl SemaWriteOutput {
-    pub fn account_registered(payload: AccountRegistered) -> Self {
-        Self::AccountRegistered(payload)
-    }
-
-    pub fn credential_rotated(payload: CredentialRotated) -> Self {
-        Self::CredentialRotated(payload)
-    }
-
-    pub fn policy_set(payload: PolicySet) -> Self {
-        Self::PolicySet(payload)
-    }
-
-    pub fn plan_prepared(payload: PlanPrepared) -> Self {
-        Self::PlanPrepared(payload)
-    }
-
-    pub fn plan_approved(payload: PlanIdentifier) -> Self {
-        Self::PlanApproved(PlanApproved::new(payload))
-    }
-
-    pub fn plan_applied(payload: PlanIdentifier) -> Self {
-        Self::PlanApplied(PlanApplied::new(payload))
-    }
-
-    pub fn account_retired(payload: AccountRetired) -> Self {
-        Self::AccountRetired(payload)
-    }
-}
-
-impl SemaReadOutput {
-    pub fn plan_observed(payload: PlanObserved) -> Self {
-        Self::PlanObserved(payload)
-    }
-
-    pub fn missed(payload: Missed) -> Self {
-        Self::Missed(payload)
     }
 }
 
@@ -726,42 +469,6 @@ impl Output {
     }
 }
 
-impl From<AccountRegistered> for SemaWriteOutput {
-    fn from(payload: AccountRegistered) -> Self {
-        Self::AccountRegistered(payload)
-    }
-}
-
-impl From<CredentialRotated> for SemaWriteOutput {
-    fn from(payload: CredentialRotated) -> Self {
-        Self::CredentialRotated(payload)
-    }
-}
-
-impl From<PolicySet> for SemaWriteOutput {
-    fn from(payload: PolicySet) -> Self {
-        Self::PolicySet(payload)
-    }
-}
-
-impl From<PlanApproved> for SemaWriteOutput {
-    fn from(payload: PlanApproved) -> Self {
-        Self::PlanApproved(payload)
-    }
-}
-
-impl From<PlanApplied> for SemaWriteOutput {
-    fn from(payload: PlanApplied) -> Self {
-        Self::PlanApplied(payload)
-    }
-}
-
-impl From<AccountRetired> for SemaWriteOutput {
-    fn from(payload: AccountRetired) -> Self {
-        Self::AccountRetired(payload)
-    }
-}
-
 impl From<AccountRegistered> for Output {
     fn from(payload: AccountRegistered) -> Self {
         Self::AccountRegistered(payload)
@@ -805,7 +512,7 @@ impl From<RequestRejected> for Output {
 }
 
 #[cfg(feature = "nota-text")]
-impl NexusWork {
+impl AccountRegistered {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -816,7 +523,7 @@ impl NexusWork {
 }
 
 #[cfg(feature = "nota-text")]
-impl NexusAction {
+impl CredentialRotated {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -827,7 +534,7 @@ impl NexusAction {
 }
 
 #[cfg(feature = "nota-text")]
-impl NexusEffectCommand {
+impl PolicySet {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -838,7 +545,7 @@ impl NexusEffectCommand {
 }
 
 #[cfg(feature = "nota-text")]
-impl NexusEffectResult {
+impl PlanApproved {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -849,7 +556,7 @@ impl NexusEffectResult {
 }
 
 #[cfg(feature = "nota-text")]
-impl ProviderApplyRequest {
+impl PlanApplied {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -860,7 +567,7 @@ impl ProviderApplyRequest {
 }
 
 #[cfg(feature = "nota-text")]
-impl ProviderApplyResult {
+impl AccountRetired {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -871,62 +578,7 @@ impl ProviderApplyResult {
 }
 
 #[cfg(feature = "nota-text")]
-impl SemaWriteInput {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl SemaReadInput {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl SemaWriteOutput {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl SemaReadOutput {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl ObservedPlan {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl RejectionReport {
+impl RequestRejected {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -1058,84 +710,7 @@ impl Retirement {
 }
 
 #[cfg(feature = "nota-text")]
-impl AccountRegistered {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl CredentialRotated {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl PolicySet {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl PlanApproved {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl PlanApplied {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl AccountRetired {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
 impl RejectionReason {
-    pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
-        <Self as NotaDecode>::from_nota_block(block)
-    }
-
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
-    }
-}
-
-#[cfg(feature = "nota-text")]
-impl RequestRejected {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
@@ -1539,141 +1114,9 @@ impl Output {
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum NexusWorkRoute {
-    SignalArrived,
-    SemaWriteCompleted,
-    SemaReadCompleted,
-    EffectCompleted,
-}
-
-impl NexusWork {
-    pub fn route(&self) -> NexusWorkRoute {
-        match self {
-            Self::SignalArrived(_) => NexusWorkRoute::SignalArrived,
-            Self::SemaWriteCompleted(_) => NexusWorkRoute::SemaWriteCompleted,
-            Self::SemaReadCompleted(_) => NexusWorkRoute::SemaReadCompleted,
-            Self::EffectCompleted(_) => NexusWorkRoute::EffectCompleted,
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum NexusActionRoute {
-    CommandSemaWrite,
-    CommandSemaRead,
-    ReplyToSignal,
-    CommandEffect,
-    Continue,
-}
-
-impl NexusAction {
-    pub fn route(&self) -> NexusActionRoute {
-        match self {
-            Self::CommandSemaWrite(_) => NexusActionRoute::CommandSemaWrite,
-            Self::CommandSemaRead(_) => NexusActionRoute::CommandSemaRead,
-            Self::ReplyToSignal(_) => NexusActionRoute::ReplyToSignal,
-            Self::CommandEffect(_) => NexusActionRoute::CommandEffect,
-            Self::Continue(_) => NexusActionRoute::Continue,
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SemaWriteInputRoute {
-    RegisterAccount,
-    RotateCredential,
-    SetPolicy,
-    PreparePlan,
-    PrepareProjection,
-    ApprovePlan,
-    ApplyPlan,
-    RetireAccount,
-}
-
-impl SemaWriteInput {
-    pub fn route(&self) -> SemaWriteInputRoute {
-        match self {
-            Self::RegisterAccount(_) => SemaWriteInputRoute::RegisterAccount,
-            Self::RotateCredential(_) => SemaWriteInputRoute::RotateCredential,
-            Self::SetPolicy(_) => SemaWriteInputRoute::SetPolicy,
-            Self::PreparePlan(_) => SemaWriteInputRoute::PreparePlan,
-            Self::PrepareProjection(_) => SemaWriteInputRoute::PrepareProjection,
-            Self::ApprovePlan(_) => SemaWriteInputRoute::ApprovePlan,
-            Self::ApplyPlan(_) => SemaWriteInputRoute::ApplyPlan,
-            Self::RetireAccount(_) => SemaWriteInputRoute::RetireAccount,
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SemaReadInputRoute {
-    ObservePlan,
-}
-
-impl SemaReadInput {
-    pub fn route(&self) -> SemaReadInputRoute {
-        match self {
-            Self::ObservePlan(_) => SemaReadInputRoute::ObservePlan,
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SemaWriteOutputRoute {
-    AccountRegistered,
-    CredentialRotated,
-    PolicySet,
-    PlanPrepared,
-    PlanApproved,
-    PlanApplied,
-    AccountRetired,
-}
-
-impl SemaWriteOutput {
-    pub fn route(&self) -> SemaWriteOutputRoute {
-        match self {
-            Self::AccountRegistered(_) => SemaWriteOutputRoute::AccountRegistered,
-            Self::CredentialRotated(_) => SemaWriteOutputRoute::CredentialRotated,
-            Self::PolicySet(_) => SemaWriteOutputRoute::PolicySet,
-            Self::PlanPrepared(_) => SemaWriteOutputRoute::PlanPrepared,
-            Self::PlanApproved(_) => SemaWriteOutputRoute::PlanApproved,
-            Self::PlanApplied(_) => SemaWriteOutputRoute::PlanApplied,
-            Self::AccountRetired(_) => SemaWriteOutputRoute::AccountRetired,
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SemaReadOutputRoute {
-    PlanObserved,
-    Missed,
-}
-
-impl SemaReadOutput {
-    pub fn route(&self) -> SemaReadOutputRoute {
-        match self {
-            Self::PlanObserved(_) => SemaReadOutputRoute::PlanObserved,
-            Self::Missed(_) => SemaReadOutputRoute::Missed,
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum SignalObjectName {
     Input(InputRoute),
     Output(OutputRoute),
-    Started,
-    Stopped,
-    Admitted,
-    Rejected,
-    Triaged,
-    Replied,
 }
 
 impl SignalObjectName {
@@ -1699,97 +1142,6 @@ impl SignalObjectName {
                 OutputRoute::AccountRetired => "SignalOutputAccountRetired",
                 OutputRoute::RequestRejected => "SignalOutputRequestRejected",
             },
-            Self::Started => "SignalStarted",
-            Self::Stopped => "SignalStopped",
-            Self::Admitted => "SignalAdmitted",
-            Self::Rejected => "SignalRejected",
-            Self::Triaged => "SignalTriaged",
-            Self::Replied => "SignalReplied",
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum NexusObjectName {
-    Work(NexusWorkRoute),
-    Action(NexusActionRoute),
-    Started,
-    Stopped,
-    Entered,
-    Decided,
-}
-
-impl NexusObjectName {
-    pub fn name(self) -> &'static str {
-        match self {
-            Self::Work(route) => match route {
-                NexusWorkRoute::SignalArrived => "NexusWorkSignalArrived",
-                NexusWorkRoute::SemaWriteCompleted => "NexusWorkSemaWriteCompleted",
-                NexusWorkRoute::SemaReadCompleted => "NexusWorkSemaReadCompleted",
-                NexusWorkRoute::EffectCompleted => "NexusWorkEffectCompleted",
-            },
-            Self::Action(route) => match route {
-                NexusActionRoute::CommandSemaWrite => "NexusActionCommandSemaWrite",
-                NexusActionRoute::CommandSemaRead => "NexusActionCommandSemaRead",
-                NexusActionRoute::ReplyToSignal => "NexusActionReplyToSignal",
-                NexusActionRoute::CommandEffect => "NexusActionCommandEffect",
-                NexusActionRoute::Continue => "NexusActionContinue",
-            },
-            Self::Started => "NexusStarted",
-            Self::Stopped => "NexusStopped",
-            Self::Entered => "NexusEntered",
-            Self::Decided => "NexusDecided",
-        }
-    }
-}
-
-#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
-pub enum SemaObjectName {
-    WriteInput(SemaWriteInputRoute),
-    ReadInput(SemaReadInputRoute),
-    WriteOutput(SemaWriteOutputRoute),
-    ReadOutput(SemaReadOutputRoute),
-    Started,
-    Stopped,
-    WriteApplied,
-    ReadObserved,
-}
-
-impl SemaObjectName {
-    pub fn name(self) -> &'static str {
-        match self {
-            Self::WriteInput(route) => match route {
-                SemaWriteInputRoute::RegisterAccount => "SemaWriteInputRegisterAccount",
-                SemaWriteInputRoute::RotateCredential => "SemaWriteInputRotateCredential",
-                SemaWriteInputRoute::SetPolicy => "SemaWriteInputSetPolicy",
-                SemaWriteInputRoute::PreparePlan => "SemaWriteInputPreparePlan",
-                SemaWriteInputRoute::PrepareProjection => "SemaWriteInputPrepareProjection",
-                SemaWriteInputRoute::ApprovePlan => "SemaWriteInputApprovePlan",
-                SemaWriteInputRoute::ApplyPlan => "SemaWriteInputApplyPlan",
-                SemaWriteInputRoute::RetireAccount => "SemaWriteInputRetireAccount",
-            },
-            Self::ReadInput(route) => match route {
-                SemaReadInputRoute::ObservePlan => "SemaReadInputObservePlan",
-            },
-            Self::WriteOutput(route) => match route {
-                SemaWriteOutputRoute::AccountRegistered => "SemaWriteOutputAccountRegistered",
-                SemaWriteOutputRoute::CredentialRotated => "SemaWriteOutputCredentialRotated",
-                SemaWriteOutputRoute::PolicySet => "SemaWriteOutputPolicySet",
-                SemaWriteOutputRoute::PlanPrepared => "SemaWriteOutputPlanPrepared",
-                SemaWriteOutputRoute::PlanApproved => "SemaWriteOutputPlanApproved",
-                SemaWriteOutputRoute::PlanApplied => "SemaWriteOutputPlanApplied",
-                SemaWriteOutputRoute::AccountRetired => "SemaWriteOutputAccountRetired",
-            },
-            Self::ReadOutput(route) => match route {
-                SemaReadOutputRoute::PlanObserved => "SemaReadOutputPlanObserved",
-                SemaReadOutputRoute::Missed => "SemaReadOutputMissed",
-            },
-            Self::Started => "SemaStarted",
-            Self::Stopped => "SemaStopped",
-            Self::WriteApplied => "SemaWriteApplied",
-            Self::ReadObserved => "SemaReadObserved",
         }
     }
 }
@@ -1798,8 +1150,6 @@ impl SemaObjectName {
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ObjectName {
     Signal(SignalObjectName),
-    Nexus(NexusObjectName),
-    Sema(SemaObjectName),
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -1810,8 +1160,6 @@ impl ObjectName {
     pub fn name(self) -> &'static str {
         match self {
             Self::Signal(object_name) => object_name.name(),
-            Self::Nexus(object_name) => object_name.name(),
-            Self::Sema(object_name) => object_name.name(),
         }
     }
 }
@@ -2074,186 +1422,6 @@ pub mod signal {
     pub type Input = super::Input;
     pub type Output = super::Output;
     pub type Signal<Root> = super::Signal<Root>;
-}
-
-pub mod nexus {
-    pub type Work = super::NexusWork;
-    pub type Action = super::NexusAction;
-    pub type Nexus<Root> = super::Nexus<Root>;
-}
-
-pub mod sema {
-    pub type WriteInput = super::SemaWriteInput;
-    pub type WriteOutput = super::SemaWriteOutput;
-    pub type ReadInput = super::SemaReadInput;
-    pub type ReadOutput = super::SemaReadOutput;
-    pub type Sema<Root> = super::Sema<Root>;
-}
-
-impl NexusWork {
-    pub fn with_origin_route(self, origin_route: OriginRoute) -> nexus::Nexus<Self> {
-        nexus::Nexus::new(origin_route, self)
-    }
-}
-
-impl NexusAction {
-    pub fn with_origin_route(self, origin_route: OriginRoute) -> nexus::Nexus<Self> {
-        nexus::Nexus::new(origin_route, self)
-    }
-}
-
-impl SemaWriteInput {
-    pub fn with_origin_route(self, origin_route: OriginRoute) -> sema::Sema<Self> {
-        sema::Sema::new(origin_route, self)
-    }
-}
-
-impl SemaWriteOutput {
-    pub fn with_origin_route(self, origin_route: OriginRoute) -> sema::Sema<Self> {
-        sema::Sema::new(origin_route, self)
-    }
-}
-
-impl SemaReadInput {
-    pub fn with_origin_route(self, origin_route: OriginRoute) -> sema::Sema<Self> {
-        sema::Sema::new(origin_route, self)
-    }
-}
-
-impl SemaReadOutput {
-    pub fn with_origin_route(self, origin_route: OriginRoute) -> sema::Sema<Self> {
-        sema::Sema::new(origin_route, self)
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ActorStartFailure {
-    ResourceBusy(String),
-    ConfigurationInvalid(String),
-}
-
-impl std::fmt::Display for ActorStartFailure {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::ResourceBusy(message) => write!(formatter, "actor resource busy: {message}"),
-            Self::ConfigurationInvalid(message) => write!(formatter, "actor configuration invalid: {message}"),
-        }
-    }
-}
-
-impl std::error::Error for ActorStartFailure {}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum ActorStopFailure {
-    ResourceLocked(String),
-    ChildStillRunning(String),
-}
-
-impl std::fmt::Display for ActorStopFailure {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::ResourceLocked(message) => write!(formatter, "actor resource locked: {message}"),
-            Self::ChildStillRunning(message) => write!(formatter, "actor child still running: {message}"),
-        }
-    }
-}
-
-impl std::error::Error for ActorStopFailure {}
-
-pub trait SignalEngine {
-    fn on_start(&mut self) -> Result<(), ActorStartFailure> {
-        Ok(())
-    }
-    fn on_stop(&mut self) -> Result<(), ActorStopFailure> {
-        Ok(())
-    }
-
-    fn trace_signal_activation(&self, _object_name: SignalObjectName) {}
-    fn trace_signal_admitted(&self) {
-        self.trace_signal_activation(SignalObjectName::Admitted);
-    }
-    fn trace_signal_rejected(&self) {
-        self.trace_signal_activation(SignalObjectName::Rejected);
-    }
-    fn trace_signal_triaged(&self) {
-        self.trace_signal_activation(SignalObjectName::Triaged);
-    }
-    fn trace_signal_replied(&self) {
-        self.trace_signal_activation(SignalObjectName::Replied);
-    }
-
-    fn triage_inner(&self, input: signal::Signal<signal::Input>) -> nexus::Nexus<nexus::Work>;
-    fn reply_inner(&self, output: nexus::Nexus<nexus::Action>) -> signal::Signal<signal::Output>;
-
-    fn triage(&self, input: signal::Signal<signal::Input>) -> nexus::Nexus<nexus::Work> {
-        let output = self.triage_inner(input);
-        self.trace_signal_triaged();
-        output
-    }
-
-    fn reply(&self, output: nexus::Nexus<nexus::Action>) -> signal::Signal<signal::Output> {
-        let signal_output = self.reply_inner(output);
-        self.trace_signal_replied();
-        signal_output
-    }
-}
-
-pub trait NexusEngine {
-    fn on_start(&mut self) -> Result<(), ActorStartFailure> {
-        Ok(())
-    }
-    fn on_stop(&mut self) -> Result<(), ActorStopFailure> {
-        Ok(())
-    }
-
-    fn trace_nexus_activation(&self, _object_name: NexusObjectName) {}
-    fn trace_nexus_entered(&self) {
-        self.trace_nexus_activation(NexusObjectName::Entered);
-    }
-    fn trace_nexus_decided(&self) {
-        self.trace_nexus_activation(NexusObjectName::Decided);
-    }
-
-    fn decide(&mut self, input: nexus::Nexus<nexus::Work>) -> nexus::Nexus<nexus::Action>;
-
-    fn execute(&mut self, input: nexus::Nexus<nexus::Work>) -> nexus::Nexus<nexus::Action> {
-        self.trace_nexus_entered();
-        let output = self.decide(input);
-        self.trace_nexus_decided();
-        output
-    }
-}
-
-pub trait SemaEngine {
-    fn on_start(&mut self) -> Result<(), ActorStartFailure> {
-        Ok(())
-    }
-    fn on_stop(&mut self) -> Result<(), ActorStopFailure> {
-        Ok(())
-    }
-
-    fn trace_sema_activation(&self, _object_name: SemaObjectName) {}
-    fn trace_sema_write_applied(&self) {
-        self.trace_sema_activation(SemaObjectName::WriteApplied);
-    }
-    fn trace_sema_read_observed(&self) {
-        self.trace_sema_activation(SemaObjectName::ReadObserved);
-    }
-
-    fn apply_inner(&mut self, input: sema::Sema<sema::WriteInput>) -> sema::Sema<sema::WriteOutput>;
-    fn observe_inner(&self, input: sema::Sema<sema::ReadInput>) -> sema::Sema<sema::ReadOutput>;
-
-    fn apply(&mut self, input: sema::Sema<sema::WriteInput>) -> sema::Sema<sema::WriteOutput> {
-        let output = self.apply_inner(input);
-        self.trace_sema_write_applied();
-        output
-    }
-
-    fn observe(&self, input: sema::Sema<sema::ReadInput>) -> sema::Sema<sema::ReadOutput> {
-        let output = self.observe_inner(input);
-        self.trace_sema_read_observed();
-        output
-    }
 }
 
 pub trait UpgradeFrom<Previous>: Sized {

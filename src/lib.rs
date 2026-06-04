@@ -8,17 +8,15 @@
 //!
 //! The public wire types are checked-in generated source from
 //! `schema/meta-signal-cloud.schema`, lowered through `schema-next` into an
-//! `Asschema` and emitted into Rust by `schema-rust-next`. The presence of
-//! `Input` + `Output` roots alongside `NexusWork` / `NexusAction` /
-//! `SemaWriteInput` / `SemaReadInput` in the namespace is what triggers the
-//! emitter to write the three engine traits (`SignalEngine`, `NexusEngine`,
-//! `SemaEngine`). `build.rs` verifies the checked-in module is fresh by
-//! round-tripping the schema source, comparing the assembled NOTA + rkyv
-//! artifacts, and re-emitting Rust from both.
+//! `Asschema` and emitted into Rust by `schema-rust-next`. `build.rs` verifies
+//! the checked-in module is fresh by round-tripping the schema source,
+//! comparing the assembled NOTA + rkyv artifacts, and re-emitting Rust from
+//! both.
 //!
-//! The hand-written daemon — the `SignalActor` / `Nexus` / `Store` impls plus
-//! the Cloudflare `CommandEffect` handler — lives in the `cloud` runtime
-//! repository, not here. This crate is the contract leg of the triad.
+//! The hand-written daemon — Signal admission, Nexus decisions, SEMA state,
+//! and Cloudflare effects — lives in the `cloud` runtime repository, not here.
+//! This crate is the policy contract leg of the triad and carries only wire
+//! vocabulary.
 
 #![forbid(unsafe_code)]
 
