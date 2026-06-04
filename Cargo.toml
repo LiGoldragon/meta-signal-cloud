@@ -13,8 +13,13 @@ build        = "build.rs"
 name = "meta_signal_cloud"
 path = "src/lib.rs"
 
+[features]
+default   = []
+nota-text = ["dep:nota-next"]
+
 [dependencies]
 nota-codec   = { git = "https://github.com/LiGoldragon/nota-codec.git", branch = "main" }
+nota-next    = { git = "https://github.com/LiGoldragon/nota-next.git", branch = "main", optional = true }
 rkyv         = { version = "0.8", default-features = false, features = ["std", "bytecheck", "little_endian", "pointer_width_32", "unaligned"] }
 signal-cloud         = { git = "https://github.com/LiGoldragon/signal-cloud.git", branch = "main" }
 signal-domain-criome = { git = "https://github.com/LiGoldragon/signal-domain-criome.git", branch = "main" }

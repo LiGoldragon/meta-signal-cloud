@@ -118,6 +118,7 @@ name = "meta-signal-cloud"
 version = "0.1.0"
 dependencies = [
  "nota-codec",
+ "nota-next",
  "rkyv",
  "schema-rust-next",
  "signal-cloud",
@@ -148,7 +149,7 @@ dependencies = [
 [[package]]
 name = "nota-codec"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/nota-codec.git?branch=main#d00fbf53808f941a173bfe473ca062e13029339e"
+source = "git+https://github.com/LiGoldragon/nota-codec.git?branch=main#f761421c383121a04df761a444a3778d1c0b137d"
 dependencies = [
  "camino",
  "nota-derive",
@@ -324,7 +325,7 @@ dependencies = [
 [[package]]
 name = "schema-rust"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#a03b3c4cac9ab5eaabb88207c195134687ad1ba8"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#d61ebf25997c47c997c0dce1d576f870e3e8383c"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -343,10 +344,11 @@ dependencies = [
 [[package]]
 name = "signal-cloud"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#eb93c663ff415db538d7aeed1fe53830f5594f50"
+source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#90ab4f4216c9970be521efcd2614178306f6b283"
 dependencies = [
  "nota-codec",
  "rkyv",
+ "schema-rust-next",
  "signal-frame",
 ]
 
@@ -363,7 +365,7 @@ dependencies = [
 [[package]]
 name = "signal-frame"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#a03b3c4cac9ab5eaabb88207c195134687ad1ba8"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#d61ebf25997c47c997c0dce1d576f870e3e8383c"
 dependencies = [
  "nota-codec",
  "paste",
@@ -375,7 +377,7 @@ dependencies = [
 [[package]]
 name = "signal-frame-macros"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#a03b3c4cac9ab5eaabb88207c195134687ad1ba8"
+source = "git+https://github.com/LiGoldragon/signal-frame.git?branch=main#d61ebf25997c47c997c0dce1d576f870e3e8383c"
 dependencies = [
  "nota-codec",
  "proc-macro2",

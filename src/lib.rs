@@ -8,6 +8,8 @@ use nota_codec::{NotaEnum, NotaRecord, NotaTransparent};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 
+pub mod schema;
+
 pub use signal_cloud::{
     Capability, DesiredState, DomainName, Plan, PlanIdentifier, Provider, ProviderAccount,
 };
