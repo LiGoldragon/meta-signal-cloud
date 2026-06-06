@@ -163,7 +163,7 @@ dependencies = [
 [[package]]
 name = "nota-next"
 version = "0.3.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#fb600e327157df47a0d18a42c25821a7e06a30a9"
+source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#f0e435a629f8312b173b0f8564c17ee0a4001561"
 dependencies = [
  "nota-next-derive",
  "rkyv",
@@ -172,7 +172,7 @@ dependencies = [
 [[package]]
 name = "nota-next-derive"
 version = "0.2.0"
-source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#fb600e327157df47a0d18a42c25821a7e06a30a9"
+source = "git+https://github.com/LiGoldragon/nota-next.git?branch=main#f0e435a629f8312b173b0f8564c17ee0a4001561"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -310,7 +310,7 @@ dependencies = [
 [[package]]
 name = "schema-next"
 version = "0.1.4"
-source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#30a88bee607ac1d590c24152483a994f14c27d07"
+source = "git+https://github.com/LiGoldragon/schema-next.git?branch=main#77e71a410d03e3cc5c16cebd82202e712439e648"
 dependencies = [
  "nota-next",
  "rkyv",
@@ -329,7 +329,7 @@ dependencies = [
 [[package]]
 name = "schema-rust-next"
 version = "0.1.14"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#799f678748f909c542e75a8be275c830e7f1f7fb"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#98fbb3692f1966e5348cf85dcf08d87f9c5b10ff"
 dependencies = [
  "prettyplease",
  "proc-macro2",
@@ -342,7 +342,7 @@ dependencies = [
 [[package]]
 name = "signal-cloud"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#ce3725562ddb57404e677db8e8d95c19158e7dce"
+source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#27d7056e4f4273190455d80769570538a16fb022"
 dependencies = [
  "nota-codec",
  "rkyv",
