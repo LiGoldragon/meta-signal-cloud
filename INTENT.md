@@ -61,10 +61,6 @@ provider states are treated as external state the cloud daemon reflects.
   types from `signal-domain-criome` at the cloud/domain handoff boundary.
 - This crate carries only typed wire vocabulary, NOTA codecs, and round-trip
   witnesses — no daemon actor tree or database.
-- This contract is authored in `schema/lib.schema` and generated into
-  `src/schema/` as the owner/meta Signal wire contract; daemon Nexus and SEMA
-  runtime schemas live in `cloud/schema/` and import this contract through Cargo
-  schema metadata.
 
 ## Non-ownership
 

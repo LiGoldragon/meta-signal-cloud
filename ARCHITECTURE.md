@@ -65,15 +65,3 @@ and its mutation surface on the meta contract.
 - Reuse provider-neutral projection types from `signal-domain-criome` at the
   cloud/domain handoff boundary.
 - Do not expose raw provider credential bytes.
-
-## Schema-language status
-
-This contract is schema-authored in `schema/lib.schema` and generated into
-`src/schema/` as a `WireContract`: typed owner-policy wire vocabulary, frame
-codecs, NOTA codecs, and round-trip witnesses. It emits no daemon runtime, no
-actors, and no SEMA engine.
-
-The paired `signal-cloud` contract remains a separate ordinary wire contract.
-The cloud daemon's Nexus and SEMA runtime schemas live in `cloud/schema/` and
-import this meta contract through Cargo schema metadata; they do not live in
-this contract repo.
