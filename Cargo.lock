@@ -283,8 +283,8 @@ dependencies = [
 
 [[package]]
 name = "schema-rust-next"
-version = "0.1.15"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#8ae5b59633cfa1570ca0dbb7bc0096a0d3829374"
+version = "0.3.0"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#a35eff74419d03e36720765e09c9e53fe87a3089"
 dependencies = [
  "prettyplease",
  "proc-macro2",
@@ -297,7 +297,7 @@ dependencies = [
 [[package]]
 name = "signal-cloud"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#e1899392d0f5fb7888b7de310fc839034c980a13"
+source = "git+https://github.com/LiGoldragon/signal-cloud.git?branch=main#d04437ee3aadccca4f2683f96fcfdae6153b42a8"
 dependencies = [
  "nota-next",
  "rkyv",
@@ -308,7 +308,7 @@ dependencies = [
 [[package]]
 name = "signal-domain-criome"
 version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/signal-domain-criome.git?branch=main#68bfa0fd4bdab801b7f14574b99754d856a87114"
+source = "git+https://github.com/LiGoldragon/signal-domain-criome.git?branch=main#452fc6409a908b1adfe515df3dc5fbf7468ffb73"
 dependencies = [
  "nota-next",
  "rkyv",
