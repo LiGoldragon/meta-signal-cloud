@@ -3,7 +3,7 @@
 Read `~/primary/AGENTS.md`, then this file.
 
 This repository is a pure meta Signal contract crate. It declares
-meta (owner-only policy) cloud-provider authority and policy records. It contains no
+meta cloud-provider authority and policy records. It contains no
 daemon, storage, actors, provider clients, or secret bytes.
 
 Secret material crosses this contract only as durable secret handles.

@@ -1,7 +1,7 @@
 # INTENT — meta-signal-cloud
 
-*The meta (owner-only policy) wire contract for the `cloud` component. Defines the
-typed request/reply channel that the cloud owner uses to register provider
+*The meta policy wire contract for the `cloud` component. Defines the
+typed request/reply channel that privileged meta callers use to register provider
 accounts, rotate credential handles, set authority policy, prepare and approve
 provider plans, and apply live provider mutations.
 Companion to `ARCHITECTURE.md` and `Cargo.toml`. Maintenance: `primary/skills/repo-intent.md`.*
@@ -15,7 +15,7 @@ and validation stays in `signal-cloud/INTENT.md`.
 
 ## Why this repo exists
 
-`meta-signal-cloud` is the **owner-only meta policy contract** for the `cloud`
+`meta-signal-cloud` is the **meta policy contract** for the `cloud`
 component. It controls provider account registration, credential-handle rotation,
 policy changes, plan preparation, and live provider plan application; it also
 accepts provider-neutral projections from `domain-criome` and turns them into
@@ -39,7 +39,7 @@ The meta channel carries:
 - **`SetPolicy(Policy)`** — replace the daemon's provider-authority policy.
 - **`PreparePlan(PlanPreparation)`** — write a provider plan into daemon plan state.
 - **`PrepareProjection(ProjectionPreparation)`** — accept a `signal-domain-criome`
-  projection and let `cloud` lower it into a provider plan under owner authority.
+  projection and let `cloud` lower it into a provider plan under meta authority.
 - **`ApprovePlan(Approval)`** — mark a prepared plan as approved for later application.
 - **`ApplyPlan(Application)`** — apply a prepared plan.
 - **`RetireAccount(Retirement)`** — remove an account binding.
@@ -52,7 +52,7 @@ provider states are treated as external state the cloud daemon reflects.
 
 - Mutate-class verbs live on this meta contract (privileged); Query-class verbs
   live on `signal-cloud` (public).
-- Owner-only operations live here because caller authority, not touched state,
+- Meta operations live here because caller authority, not touched state,
   determines the contract split.
 - Raw provider credential bytes are never exposed — this crate carries
   secret-handle references, not secret bytes.
@@ -73,7 +73,7 @@ This crate does not own:
 
 ## See also
 
-- `ARCHITECTURE.md` — public operations, the ordinary/owner split, and constraints.
+- `ARCHITECTURE.md` — public operations, the ordinary/meta split, and constraints.
 - `../cloud/INTENT.md` — daemon-side intent (provider plans, application, reflection).
 - `../signal-cloud/INTENT.md` — ordinary provider observation/validation contract.
 - `../signal-domain-criome/INTENT.md` — provider-neutral projection vocabulary.

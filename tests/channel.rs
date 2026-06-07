@@ -4,14 +4,12 @@ use meta_signal_cloud::{
     PlanIdentifier, PlanPreparation, Policy, ProjectionPreparation, Provider, ProviderAccount,
     Registration, RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
 };
-use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
+use nota_next::{NotaEncode, NotaSource};
 use signal_domain_criome::{Projection, ProjectionQuery, ProjectionScope};
 use signal_frame::{RequestPayload, SignalOperationHeads};
 
 fn encode_to_text<T: NotaEncode>(value: &T) -> String {
-    let mut encoder = Encoder::new();
-    value.encode(&mut encoder).expect("encode");
-    encoder.into_string()
+    value.to_nota()
 }
 
 fn desired_state() -> DesiredState {
@@ -24,7 +22,7 @@ fn desired_state() -> DesiredState {
 }
 
 #[test]
-fn operations_are_owner_authority_verbs() {
+fn operations_are_meta_authority_verbs() {
     assert_eq!(
         <Operation as SignalOperationHeads>::HEADS,
         &[
@@ -58,11 +56,10 @@ fn registration_round_trips_through_nota_without_secret_bytes() {
     let text = encode_to_text(&operation);
     assert_eq!(
         text,
-        "(RegisterAccount (Cloudflare primary cloudflare-dns-token))"
+        "(RegisterAccount (Cloudflare [primary] [cloudflare-dns-token]))"
     );
 
-    let mut decoder = Decoder::new(&text);
-    let decoded = Operation::decode(&mut decoder).expect("decode");
+    let decoded = NotaSource::new(&text).parse::<Operation>().expect("decode");
     assert_eq!(decoded, operation);
 }
 
@@ -88,7 +85,7 @@ fn policy_uses_capability_directives_not_boolean_flags() {
 }
 
 #[test]
-fn plan_preparation_round_trips_through_owner_contract() {
+fn plan_preparation_round_trips_through_meta_contract() {
     let operation = Operation::PreparePlan(PlanPreparation {
         desired_state: desired_state(),
     });
@@ -96,8 +93,7 @@ fn plan_preparation_round_trips_through_owner_contract() {
     assert_eq!(operation.operation_kind(), OperationKind::PreparePlan);
 
     let text = encode_to_text(&operation);
-    let mut decoder = Decoder::new(&text);
-    let decoded = Operation::decode(&mut decoder).expect("decode");
+    let decoded = NotaSource::new(&text).parse::<Operation>().expect("decode");
     assert_eq!(decoded, operation);
 }
 
@@ -128,8 +124,7 @@ fn reply_round_trips_through_nota() {
     assert_eq!(reply.kind(), ReplyKind::AccountRegistered);
 
     let text = encode_to_text(&reply);
-    let mut decoder = Decoder::new(&text);
-    let decoded = Reply::decode(&mut decoder).expect("decode");
+    let decoded = NotaSource::new(&text).parse::<Reply>().expect("decode");
     assert_eq!(decoded, reply);
 }
 
@@ -150,8 +145,7 @@ fn plan_prepared_reply_carries_public_plan_record() {
     assert_eq!(reply.kind(), ReplyKind::PlanPrepared);
 
     let text = encode_to_text(&reply);
-    let mut decoder = Decoder::new(&text);
-    let decoded = Reply::decode(&mut decoder).expect("decode");
+    let decoded = NotaSource::new(&text).parse::<Reply>().expect("decode");
     assert_eq!(decoded, reply);
 }
 
@@ -174,7 +168,7 @@ fn application_and_rejection_replies_are_typed() {
 }
 
 #[test]
-fn approve_and_apply_are_distinct_owner_operations() {
+fn approve_and_apply_are_distinct_meta_operations() {
     let approve = Operation::ApprovePlan(Approval {
         plan: PlanIdentifier::new("plan-one"),
     });

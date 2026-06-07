@@ -1,6 +1,6 @@
 # meta-signal-cloud Architecture
 
-`meta-signal-cloud` is the meta (owner-only policy) Signal contract for the `cloud`
+`meta-signal-cloud` is the meta policy Signal contract for the `cloud`
 component. It controls provider account registration, credential-handle
 rotation, policy changes, plan preparation, and live provider plan
 application. It also accepts provider-neutral projections from `domain-criome`
@@ -23,14 +23,14 @@ identity.
 - `SetPolicy(Policy)` replaces the daemon's provider-authority policy.
 - `PreparePlan(PlanPreparation)` writes a provider plan into daemon plan state.
 - `PrepareProjection(ProjectionPreparation)` accepts a `signal-domain-criome`
-  projection and lets `cloud` lower it into a provider plan under owner
+  projection and lets `cloud` lower it into a provider plan under meta
   authority.
 - `ApprovePlan(Approval)` marks a prepared plan as approved for later
   application.
 - `ApplyPlan(Application)` applies a prepared plan.
 - `RetireAccount(Retirement)` removes an account binding.
 
-## Ordinary vs owner split
+## Ordinary vs meta split
 
 Per Spirit records 311 and 325 (Maximum certainty, 2026-05-23), the cloud
 surface splits Mutate-class verbs onto this meta contract (privileged) and
@@ -49,7 +49,7 @@ and its mutation surface on the meta contract.
 - Provider account policy.
 - Zone allowlists.
 - Capability directives.
-- Owner-only plan approval and application records.
+- Meta plan approval and application records.
 
 ## Does Not Own
 
