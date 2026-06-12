@@ -56,7 +56,7 @@ fn registration_round_trips_through_nota_without_secret_bytes() {
     let text = encode_to_text(&operation);
     assert_eq!(
         text,
-        "(RegisterAccount (Cloudflare [primary] [cloudflare-dns-token]))"
+        "(RegisterAccount (Cloudflare primary cloudflare-dns-token))"
     );
 
     let decoded = NotaSource::new(&text).parse::<Operation>().expect("decode");

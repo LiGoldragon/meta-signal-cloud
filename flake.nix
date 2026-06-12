@@ -32,10 +32,8 @@
           "rust-src"
         ];
         craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
-        schemaFilter = path: type:
-          type == "regular" && pkgs.lib.hasSuffix ".schema" path;
-        sourceFilter = path: type:
-          (craneLib.filterCargoSources path type) || (schemaFilter path type);
+        schemaFilter = path: type: type == "regular" && pkgs.lib.hasSuffix ".schema" path;
+        sourceFilter = path: type: (craneLib.filterCargoSources path type) || (schemaFilter path type);
         src = pkgs.lib.cleanSourceWith {
           src = ./.;
           filter = sourceFilter;
@@ -67,6 +65,22 @@
             commonArgs
             // {
               inherit cargoArtifacts;
+            }
+          );
+
+          test-nota-text = craneLib.cargoTest (
+            commonArgs
+            // {
+              inherit cargoArtifacts;
+              cargoTestExtraArgs = "--features nota-text --all-targets";
+            }
+          );
+
+          clippy-nota-text = craneLib.cargoClippy (
+            commonArgs
+            // {
+              inherit cargoArtifacts;
+              cargoClippyExtraArgs = "--features nota-text --all-targets -- -D warnings";
             }
           );
 
