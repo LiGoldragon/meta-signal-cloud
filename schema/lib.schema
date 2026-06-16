@@ -1,6 +1,20 @@
 {}
-[RegisterAccount RotateCredential SetPolicy PreparePlan PrepareProjection ApprovePlan ApplyPlan RetireAccount]
-[AccountRegistered CredentialRotated PolicySet PlanPrepared PlanApproved PlanApplied AccountRetired RequestRejected]
+[(RegisterAccount Registration)
+ (RotateCredential Rotation)
+ (SetPolicy Policy)
+ (PreparePlan PlanPreparation)
+ (PrepareProjection ProjectionPreparation)
+ (ApprovePlan Approval)
+ (ApplyPlan Application)
+ (RetireAccount Retirement)]
+[(AccountRegistered AccountRegistered)
+ (CredentialRotated CredentialRotated)
+ (PolicySet PolicySet)
+ (PlanPrepared PlanPrepared)
+ (PlanApproved PlanApproved)
+ (PlanApplied PlanApplied)
+ (AccountRetired AccountRetired)
+ (RequestRejected RequestRejected)]
 {
   RegisterAccount Registration
   RotateCredential Rotation
@@ -11,50 +25,50 @@
   ApplyPlan Application
   RetireAccount Retirement
 
-  AccountRegistered { Provider * ProviderAccount * }
-  CredentialRotated { Provider * ProviderAccount * }
+  AccountRegistered { provider Provider provider_account ProviderAccount }
+  CredentialRotated { provider Provider provider_account ProviderAccount }
   PolicySet { capability_policy_count Integer zone_policy_count Integer }
   PlanPrepared Plan
   PlanApproved { plan PlanIdentifier }
   PlanApplied { plan PlanIdentifier }
-  AccountRetired { Provider * ProviderAccount * }
-  RequestRejected { RejectionReason * DatabaseMarker * }
+  AccountRetired { provider Provider provider_account ProviderAccount }
+  RequestRejected { rejection_reason RejectionReason database_marker DatabaseMarker }
 
-  Registration { Provider * ProviderAccount * CredentialHandle * }
-  Rotation { Provider * ProviderAccount * CredentialHandle * }
+  Registration { provider Provider provider_account ProviderAccount credential_handle CredentialHandle }
+  Rotation { provider Provider provider_account ProviderAccount credential_handle CredentialHandle }
   CapabilityDirective [Enable Disable]
-  CapabilityPolicy { Provider * ProviderAccount * Capability * CapabilityDirective * }
-  ZonePolicy { Provider * ProviderAccount * allowed_zones (Vec DomainName) }
-  Policy { zones (Vec ZonePolicy) capabilities (Vec CapabilityPolicy) }
-  PlanPreparation { DesiredState * }
-  ProjectionPreparation { Provider * Projection * }
+  CapabilityPolicy { provider Provider provider_account ProviderAccount capability Capability capability_directive CapabilityDirective }
+  ZonePolicy { provider Provider provider_account ProviderAccount allowed_zones (Vector DomainName) }
+  Policy { zones (Vector ZonePolicy) capabilities (Vector CapabilityPolicy) }
+  PlanPreparation DesiredState
+  ProjectionPreparation { provider Provider projection Projection }
   Approval { plan PlanIdentifier }
   Application { plan PlanIdentifier }
-  Retirement { Provider * ProviderAccount * }
+  Retirement { provider Provider provider_account ProviderAccount }
 
   RejectionReason [CredentialHandleUnknown ProviderNotConfigured AccountUnknown PlanUnknown PlanNotApproved PlanGenerationFailed CapabilityUnauthorized]
   Plan {
     identifier PlanIdentifier
-    Provider *
+    provider Provider
     zone DomainName
-    records_to_create (Vec DomainNameSystemRecord)
-    records_to_update (Vec DomainNameSystemRecord)
-    record_names_to_delete (Vec DomainName)
-    redirects_to_create (Vec RedirectRule)
-    redirects_to_update (Vec RedirectRule)
-    redirect_sources_to_delete (Vec DomainName)
+    records_to_create (Vector DomainNameSystemRecord)
+    records_to_update (Vector DomainNameSystemRecord)
+    record_names_to_delete (Vector DomainName)
+    redirects_to_create (Vector RedirectRule)
+    redirects_to_update (Vector RedirectRule)
+    redirect_sources_to_delete (Vector DomainName)
   }
   DesiredState {
-    Provider *
+    provider Provider
     zone DomainName
-    records (Vec DomainNameSystemRecord)
-    redirects (Vec RedirectRule)
+    records (Vector DomainNameSystemRecord)
+    redirects (Vector RedirectRule)
   }
-  Projection { ProjectionQuery * records (Vec DomainNameSystemRecord) redirects (Vec RedirectRule) }
-  ProjectionQuery { domain DomainName ProjectionScope * }
+  Projection { projection_query ProjectionQuery records (Vector DomainNameSystemRecord) redirects (Vector RedirectRule) }
+  ProjectionQuery { domain DomainName projection_scope ProjectionScope }
   ProjectionScope [PublicRecords AllRecords]
-  DomainNameSystemRecord { name DomainName RecordKind * content RecordContent }
-  RedirectRule { source DomainName target DomainName RedirectStatus * }
+  DomainNameSystemRecord { name DomainName record_kind RecordKind content RecordContent }
+  RedirectRule { source DomainName target DomainName redirect_status RedirectStatus }
   RecordKind [Address AddressSix CanonicalName MailExchange Text Service]
   RedirectStatus [Permanent Temporary]
   RecordContent String
@@ -67,5 +81,5 @@
   PlanIdentifier String
   CommitSequence Integer
   StateDigest Integer
-  DatabaseMarker { CommitSequence * StateDigest * }
+  DatabaseMarker { commit_sequence CommitSequence state_digest StateDigest }
 }

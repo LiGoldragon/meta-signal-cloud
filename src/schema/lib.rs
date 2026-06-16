@@ -424,14 +424,14 @@ pub struct DatabaseMarker {
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
-    RegisterAccount(RegisterAccount),
-    RotateCredential(RotateCredential),
-    SetPolicy(SetPolicy),
-    PreparePlan(PreparePlan),
-    PrepareProjection(PrepareProjection),
-    ApprovePlan(ApprovePlan),
-    ApplyPlan(ApplyPlan),
-    RetireAccount(RetireAccount),
+    RegisterAccount(Registration),
+    RotateCredential(Rotation),
+    SetPolicy(Policy),
+    PreparePlan(PlanPreparation),
+    PrepareProjection(ProjectionPreparation),
+    ApprovePlan(Approval),
+    ApplyPlan(Application),
+    RetireAccount(Retirement),
 }
 
 #[rustfmt::skip]
@@ -732,6 +732,24 @@ impl From<String> for RecordContent {
         Self::new(payload)
     }
 }
+#[rustfmt::skip]
+impl std::fmt::Display for RecordContent {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for RecordContent {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for RecordContent {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
 
 #[rustfmt::skip]
 impl ProviderAccount {
@@ -749,6 +767,24 @@ impl ProviderAccount {
 impl From<String> for ProviderAccount {
     fn from(payload: String) -> Self {
         Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for ProviderAccount {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for ProviderAccount {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for ProviderAccount {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
     }
 }
 
@@ -770,6 +806,24 @@ impl From<String> for CredentialHandle {
         Self::new(payload)
     }
 }
+#[rustfmt::skip]
+impl std::fmt::Display for CredentialHandle {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for CredentialHandle {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for CredentialHandle {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
 
 #[rustfmt::skip]
 impl DomainName {
@@ -787,6 +841,24 @@ impl DomainName {
 impl From<String> for DomainName {
     fn from(payload: String) -> Self {
         Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for DomainName {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for DomainName {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for DomainName {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
     }
 }
 
@@ -808,6 +880,24 @@ impl From<String> for PlanIdentifier {
         Self::new(payload)
     }
 }
+#[rustfmt::skip]
+impl std::fmt::Display for PlanIdentifier {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for PlanIdentifier {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for PlanIdentifier {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
 
 #[rustfmt::skip]
 impl CommitSequence {
@@ -825,6 +915,24 @@ impl CommitSequence {
 impl From<Integer> for CommitSequence {
     fn from(payload: Integer) -> Self {
         Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for CommitSequence {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<u64> for CommitSequence {
+    fn eq(&self, other: &u64) -> bool {
+        self.payload() == other
+    }
+}
+#[rustfmt::skip]
+impl PartialOrd<u64> for CommitSequence {
+    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
+        self.payload().partial_cmp(other)
     }
 }
 
@@ -846,32 +954,50 @@ impl From<Integer> for StateDigest {
         Self::new(payload)
     }
 }
+#[rustfmt::skip]
+impl std::fmt::Display for StateDigest {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<u64> for StateDigest {
+    fn eq(&self, other: &u64) -> bool {
+        self.payload() == other
+    }
+}
+#[rustfmt::skip]
+impl PartialOrd<u64> for StateDigest {
+    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
+        self.payload().partial_cmp(other)
+    }
+}
 
 #[rustfmt::skip]
 impl Input {
     pub fn register_account(payload: Registration) -> Self {
-        Self::RegisterAccount(RegisterAccount::new(payload))
+        Self::RegisterAccount(payload)
     }
     pub fn rotate_credential(payload: Rotation) -> Self {
-        Self::RotateCredential(RotateCredential::new(payload))
+        Self::RotateCredential(payload)
     }
     pub fn set_policy(payload: Policy) -> Self {
-        Self::SetPolicy(SetPolicy::new(payload))
+        Self::SetPolicy(payload)
     }
-    pub fn prepare_plan(payload: PlanPreparation) -> Self {
-        Self::PreparePlan(PreparePlan::new(payload))
+    pub fn prepare_plan(payload: DesiredState) -> Self {
+        Self::PreparePlan(PlanPreparation::new(payload))
     }
     pub fn prepare_projection(payload: ProjectionPreparation) -> Self {
-        Self::PrepareProjection(PrepareProjection::new(payload))
+        Self::PrepareProjection(payload)
     }
-    pub fn approve_plan(payload: Approval) -> Self {
-        Self::ApprovePlan(ApprovePlan::new(payload))
+    pub fn approve_plan(payload: PlanIdentifier) -> Self {
+        Self::ApprovePlan(Approval::new(payload))
     }
-    pub fn apply_plan(payload: Application) -> Self {
-        Self::ApplyPlan(ApplyPlan::new(payload))
+    pub fn apply_plan(payload: PlanIdentifier) -> Self {
+        Self::ApplyPlan(Application::new(payload))
     }
     pub fn retire_account(payload: Retirement) -> Self {
-        Self::RetireAccount(RetireAccount::new(payload))
+        Self::RetireAccount(payload)
     }
 }
 
@@ -904,57 +1030,57 @@ impl Output {
 }
 
 #[rustfmt::skip]
-impl From<RegisterAccount> for Input {
-    fn from(payload: RegisterAccount) -> Self {
+impl From<Registration> for Input {
+    fn from(payload: Registration) -> Self {
         Self::RegisterAccount(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<RotateCredential> for Input {
-    fn from(payload: RotateCredential) -> Self {
+impl From<Rotation> for Input {
+    fn from(payload: Rotation) -> Self {
         Self::RotateCredential(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<SetPolicy> for Input {
-    fn from(payload: SetPolicy) -> Self {
+impl From<Policy> for Input {
+    fn from(payload: Policy) -> Self {
         Self::SetPolicy(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<PreparePlan> for Input {
-    fn from(payload: PreparePlan) -> Self {
+impl From<PlanPreparation> for Input {
+    fn from(payload: PlanPreparation) -> Self {
         Self::PreparePlan(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<PrepareProjection> for Input {
-    fn from(payload: PrepareProjection) -> Self {
+impl From<ProjectionPreparation> for Input {
+    fn from(payload: ProjectionPreparation) -> Self {
         Self::PrepareProjection(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<ApprovePlan> for Input {
-    fn from(payload: ApprovePlan) -> Self {
+impl From<Approval> for Input {
+    fn from(payload: Approval) -> Self {
         Self::ApprovePlan(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<ApplyPlan> for Input {
-    fn from(payload: ApplyPlan) -> Self {
+impl From<Application> for Input {
+    fn from(payload: Application) -> Self {
         Self::ApplyPlan(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<RetireAccount> for Input {
-    fn from(payload: RetireAccount) -> Self {
+impl From<Retirement> for Input {
+    fn from(payload: Retirement) -> Self {
         Self::RetireAccount(payload)
     }
 }
