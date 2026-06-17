@@ -1,8 +1,9 @@
 use meta_signal_cloud::{
     AccountRegistered, Application, Approval, Capability, CapabilityDirective, CapabilityPolicy,
-    CredentialHandle, DesiredState, DomainName, Operation, OperationKind, Plan, PlanApplied,
-    PlanIdentifier, PlanPreparation, Policy, ProjectionPreparation, Provider, ProviderAccount,
-    Registration, RejectionReason, Reply, ReplyKind, RequestRejected, ZonePolicy,
+    CredentialHandle, DesiredHostState, DesiredState, DomainName, HostIntent, HostPlan,
+    HostPlanPreparation, ImageName, Operation, OperationKind, Plan, PlanApplied, PlanIdentifier,
+    PlanPreparation, Policy, ProjectionPreparation, Provider, ProviderAccount, Registration,
+    RejectionReason, Reply, ReplyKind, RequestRejected, ServerType, SshKeyName, ZonePolicy,
 };
 use nota_next::{NotaEncode, NotaSource};
 use signal_domain_criome::{Projection, ProjectionQuery, ProjectionScope};
@@ -30,6 +31,7 @@ fn operations_are_meta_authority_verbs() {
             "RotateCredential",
             "SetPolicy",
             "PreparePlan",
+            "PrepareHostPlan",
             "PrepareProjection",
             "ApprovePlan",
             "ApplyPlan",
@@ -95,6 +97,44 @@ fn plan_preparation_round_trips_through_meta_contract() {
     let text = encode_to_text(&operation);
     let decoded = NotaSource::new(&text).parse::<Operation>().expect("decode");
     assert_eq!(decoded, operation);
+}
+
+#[test]
+fn host_plan_preparation_round_trips_through_meta_contract() {
+    let operation = Operation::PrepareHostPlan(HostPlanPreparation {
+        desired_host_state: DesiredHostState {
+            provider: Provider::Hetzner,
+            host_name: DomainName::new("build.goldragon.criome"),
+            server_type: ServerType::new("cx22"),
+            image_name: ImageName::new("debian-12"),
+            ssh_key_name: SshKeyName::new("primary"),
+        },
+    });
+
+    assert_eq!(operation.operation_kind(), OperationKind::PrepareHostPlan);
+
+    let text = encode_to_text(&operation);
+    let decoded = NotaSource::new(&text).parse::<Operation>().expect("decode");
+    assert_eq!(decoded, operation);
+}
+
+#[test]
+fn host_plan_prepared_reply_carries_public_host_plan_record() {
+    let reply = Reply::HostPlanPrepared(HostPlan {
+        identifier: PlanIdentifier::new("host-plan-one"),
+        provider: Provider::Hetzner,
+        host_name: DomainName::new("build.goldragon.criome"),
+        server_type: ServerType::new("cx22"),
+        image_name: ImageName::new("debian-12"),
+        ssh_key_name: SshKeyName::new("primary"),
+        intent: HostIntent::Create,
+    });
+
+    assert_eq!(reply.kind(), ReplyKind::HostPlanPrepared);
+
+    let text = encode_to_text(&reply);
+    let decoded = NotaSource::new(&text).parse::<Reply>().expect("decode");
+    assert_eq!(decoded, reply);
 }
 
 #[test]

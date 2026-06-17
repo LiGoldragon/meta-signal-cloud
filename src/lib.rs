@@ -110,6 +110,127 @@ pub struct PlanPreparation {
 }
 
 #[derive(
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    Hash,
+)]
+pub struct ServerType(String);
+
+impl ServerType {
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    Hash,
+)]
+pub struct ImageName(String);
+
+impl ImageName {
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    PartialEq,
+    Eq,
+    Hash,
+)]
+pub struct SshKeyName(String);
+
+impl SshKeyName {
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+}
+
+#[derive(
+    Archive,
+    RkyvSerialize,
+    RkyvDeserialize,
+    NotaEncode,
+    NotaDecode,
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    Hash,
+)]
+pub enum HostIntent {
+    Create,
+    Destroy,
+}
+
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
+pub struct DesiredHostState {
+    pub provider: Provider,
+    pub host_name: DomainName,
+    pub server_type: ServerType,
+    pub image_name: ImageName,
+    pub ssh_key_name: SshKeyName,
+}
+
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
+pub struct HostPlanPreparation {
+    pub desired_host_state: DesiredHostState,
+}
+
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
+pub struct HostPlan {
+    pub identifier: PlanIdentifier,
+    pub provider: Provider,
+    pub host_name: DomainName,
+    pub server_type: ServerType,
+    pub image_name: ImageName,
+    pub ssh_key_name: SshKeyName,
+    pub intent: HostIntent,
+}
+
+#[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
 )]
 pub struct ProjectionPreparation {
@@ -221,6 +342,7 @@ signal_channel! {
         operation RotateCredential(Rotation),
         operation SetPolicy(Policy),
         operation PreparePlan(PlanPreparation),
+        operation PrepareHostPlan(HostPlanPreparation),
         operation PrepareProjection(ProjectionPreparation),
         operation ApprovePlan(Approval),
         operation ApplyPlan(Application),
@@ -231,6 +353,7 @@ signal_channel! {
         CredentialRotated(CredentialRotated),
         PolicySet(PolicySet),
         PlanPrepared(Plan),
+        HostPlanPrepared(HostPlan),
         PlanApproved(PlanApproved),
         PlanApplied(PlanApplied),
         AccountRetired(AccountRetired),

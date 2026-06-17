@@ -3,6 +3,7 @@
  (RotateCredential Rotation)
  (SetPolicy Policy)
  (PreparePlan PlanPreparation)
+ (PrepareHostPlan HostPlanPreparation)
  (PrepareProjection ProjectionPreparation)
  (ApprovePlan Approval)
  (ApplyPlan Application)
@@ -11,6 +12,7 @@
  (CredentialRotated CredentialRotated)
  (PolicySet PolicySet)
  (PlanPrepared PlanPrepared)
+ (HostPlanPrepared HostPlanPrepared)
  (PlanApproved PlanApproved)
  (PlanApplied PlanApplied)
  (AccountRetired AccountRetired)
@@ -20,6 +22,7 @@
   RotateCredential Rotation
   SetPolicy Policy
   PreparePlan PlanPreparation
+  PrepareHostPlan HostPlanPreparation
   PrepareProjection ProjectionPreparation
   ApprovePlan Approval
   ApplyPlan Application
@@ -29,6 +32,7 @@
   CredentialRotated { provider Provider provider_account ProviderAccount }
   PolicySet { capability_policy_count Integer zone_policy_count Integer }
   PlanPrepared Plan
+  HostPlanPrepared HostPlan
   PlanApproved { plan PlanIdentifier }
   PlanApplied { plan PlanIdentifier }
   AccountRetired { provider Provider provider_account ProviderAccount }
@@ -41,6 +45,7 @@
   ZonePolicy { provider Provider provider_account ProviderAccount allowed_zones (Vector DomainName) }
   Policy { zones (Vector ZonePolicy) capabilities (Vector CapabilityPolicy) }
   PlanPreparation DesiredState
+  HostPlanPreparation DesiredHostState
   ProjectionPreparation { provider Provider projection Projection }
   Approval { plan PlanIdentifier }
   Application { plan PlanIdentifier }
@@ -64,6 +69,23 @@
     records (Vector DomainNameSystemRecord)
     redirects (Vector RedirectRule)
   }
+  HostPlan {
+    identifier PlanIdentifier
+    provider Provider
+    host_name DomainName
+    server_type ServerType
+    image_name ImageName
+    ssh_key_name SshKeyName
+    intent HostIntent
+  }
+  DesiredHostState {
+    provider Provider
+    host_name DomainName
+    server_type ServerType
+    image_name ImageName
+    ssh_key_name SshKeyName
+  }
+  HostIntent [Create Destroy]
   Projection { projection_query ProjectionQuery records (Vector DomainNameSystemRecord) redirects (Vector RedirectRule) }
   ProjectionQuery { domain DomainName projection_scope ProjectionScope }
   ProjectionScope [PublicRecords AllRecords]
@@ -79,6 +101,9 @@
   CredentialHandle String
   DomainName String
   PlanIdentifier String
+  ServerType String
+  ImageName String
+  SshKeyName String
   CommitSequence Integer
   StateDigest Integer
   DatabaseMarker { commit_sequence CommitSequence state_digest StateDigest }

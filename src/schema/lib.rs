@@ -36,6 +36,11 @@ pub struct PreparePlan(PlanPreparation);
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct PrepareHostPlan(HostPlanPreparation);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct PrepareProjection(ProjectionPreparation);
 
 #[rustfmt::skip]
@@ -81,6 +86,11 @@ pub struct PolicySet {
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct PlanPrepared(Plan);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HostPlanPrepared(HostPlan);
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -178,6 +188,11 @@ pub struct PlanPreparation(DesiredState);
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HostPlanPreparation(DesiredHostState);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ProjectionPreparation {
     pub provider: Provider,
     pub projection: Projection,
@@ -246,6 +261,47 @@ pub struct DesiredState {
     pub zone: DomainName,
     pub records: Vec<DomainNameSystemRecord>,
     pub redirects: Vec<RedirectRule>,
+}
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HostPlan {
+    pub identifier: PlanIdentifier,
+    pub provider: Provider,
+    pub host_name: DomainName,
+    pub server_type: ServerType,
+    pub image_name: ImageName,
+    pub ssh_key_name: SshKeyName,
+    pub intent: HostIntent,
+}
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct DesiredHostState {
+    pub provider: Provider,
+    pub host_name: DomainName,
+    pub server_type: ServerType,
+    pub image_name: ImageName,
+    pub ssh_key_name: SshKeyName,
+}
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
+pub enum HostIntent {
+    Create,
+    Destroy,
 }
 
 #[rustfmt::skip]
@@ -405,6 +461,21 @@ pub struct PlanIdentifier(String);
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ServerType(String);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ImageName(String);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SshKeyName(String);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct CommitSequence(Integer);
 
 #[rustfmt::skip]
@@ -428,6 +499,7 @@ pub enum Input {
     RotateCredential(Rotation),
     SetPolicy(Policy),
     PreparePlan(PlanPreparation),
+    PrepareHostPlan(HostPlanPreparation),
     PrepareProjection(ProjectionPreparation),
     ApprovePlan(Approval),
     ApplyPlan(Application),
@@ -442,6 +514,7 @@ pub enum Output {
     CredentialRotated(CredentialRotated),
     PolicySet(PolicySet),
     PlanPrepared(PlanPrepared),
+    HostPlanPrepared(HostPlanPrepared),
     PlanApproved(PlanApproved),
     PlanApplied(PlanApplied),
     AccountRetired(AccountRetired),
@@ -520,6 +593,25 @@ impl PreparePlan {
 #[rustfmt::skip]
 impl From<PlanPreparation> for PreparePlan {
     fn from(payload: PlanPreparation) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl PrepareHostPlan {
+    pub fn new(payload: HostPlanPreparation) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HostPlanPreparation {
+        &self.0
+    }
+    pub fn into_payload(self) -> HostPlanPreparation {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HostPlanPreparation> for PrepareHostPlan {
+    fn from(payload: HostPlanPreparation) -> Self {
         Self::new(payload)
     }
 }
@@ -620,6 +712,25 @@ impl From<Plan> for PlanPrepared {
 }
 
 #[rustfmt::skip]
+impl HostPlanPrepared {
+    pub fn new(payload: HostPlan) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HostPlan {
+        &self.0
+    }
+    pub fn into_payload(self) -> HostPlan {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HostPlan> for HostPlanPrepared {
+    fn from(payload: HostPlan) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl PlanApproved {
     pub fn new(payload: PlanIdentifier) -> Self {
         Self(payload)
@@ -672,6 +783,25 @@ impl PlanPreparation {
 #[rustfmt::skip]
 impl From<DesiredState> for PlanPreparation {
     fn from(payload: DesiredState) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HostPlanPreparation {
+    pub fn new(payload: DesiredHostState) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &DesiredHostState {
+        &self.0
+    }
+    pub fn into_payload(self) -> DesiredHostState {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<DesiredHostState> for HostPlanPreparation {
+    fn from(payload: DesiredHostState) -> Self {
         Self::new(payload)
     }
 }
@@ -900,6 +1030,117 @@ impl PartialEq<&str> for PlanIdentifier {
 }
 
 #[rustfmt::skip]
+impl ServerType {
+    pub fn new(payload: impl Into<String>) -> Self {
+        Self(payload.into())
+    }
+    pub fn payload(&self) -> &String {
+        &self.0
+    }
+    pub fn into_payload(self) -> String {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<String> for ServerType {
+    fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for ServerType {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for ServerType {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for ServerType {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
+
+#[rustfmt::skip]
+impl ImageName {
+    pub fn new(payload: impl Into<String>) -> Self {
+        Self(payload.into())
+    }
+    pub fn payload(&self) -> &String {
+        &self.0
+    }
+    pub fn into_payload(self) -> String {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<String> for ImageName {
+    fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for ImageName {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for ImageName {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for ImageName {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
+
+#[rustfmt::skip]
+impl SshKeyName {
+    pub fn new(payload: impl Into<String>) -> Self {
+        Self(payload.into())
+    }
+    pub fn payload(&self) -> &String {
+        &self.0
+    }
+    pub fn into_payload(self) -> String {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<String> for SshKeyName {
+    fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for SshKeyName {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for SshKeyName {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for SshKeyName {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
+
+#[rustfmt::skip]
 impl CommitSequence {
     pub fn new(payload: Integer) -> Self {
         Self(payload)
@@ -987,6 +1228,9 @@ impl Input {
     pub fn prepare_plan(payload: DesiredState) -> Self {
         Self::PreparePlan(PlanPreparation::new(payload))
     }
+    pub fn prepare_host_plan(payload: DesiredHostState) -> Self {
+        Self::PrepareHostPlan(HostPlanPreparation::new(payload))
+    }
     pub fn prepare_projection(payload: ProjectionPreparation) -> Self {
         Self::PrepareProjection(payload)
     }
@@ -1014,6 +1258,9 @@ impl Output {
     }
     pub fn plan_prepared(payload: Plan) -> Self {
         Self::PlanPrepared(PlanPrepared::new(payload))
+    }
+    pub fn host_plan_prepared(payload: HostPlan) -> Self {
+        Self::HostPlanPrepared(HostPlanPrepared::new(payload))
     }
     pub fn plan_approved(payload: PlanIdentifier) -> Self {
         Self::PlanApproved(PlanApproved::new(payload))
@@ -1054,6 +1301,13 @@ impl From<Policy> for Input {
 impl From<PlanPreparation> for Input {
     fn from(payload: PlanPreparation) -> Self {
         Self::PreparePlan(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl From<HostPlanPreparation> for Input {
+    fn from(payload: HostPlanPreparation) -> Self {
+        Self::PrepareHostPlan(payload)
     }
 }
 
@@ -1110,6 +1364,13 @@ impl From<PolicySet> for Output {
 impl From<PlanPrepared> for Output {
     fn from(payload: PlanPrepared) -> Self {
         Self::PlanPrepared(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl From<HostPlanPrepared> for Output {
+    fn from(payload: HostPlanPrepared) -> Self {
+        Self::HostPlanPrepared(payload)
     }
 }
 
@@ -1179,18 +1440,20 @@ pub mod short_header {
     pub const INPUT_ROTATE_CREDENTIAL: u64 = 0x0001000000000000;
     pub const INPUT_SET_POLICY: u64 = 0x0002000000000000;
     pub const INPUT_PREPARE_PLAN: u64 = 0x0003000000000000;
-    pub const INPUT_PREPARE_PROJECTION: u64 = 0x0004000000000000;
-    pub const INPUT_APPROVE_PLAN: u64 = 0x0005000000000000;
-    pub const INPUT_APPLY_PLAN: u64 = 0x0006000000000000;
-    pub const INPUT_RETIRE_ACCOUNT: u64 = 0x0007000000000000;
+    pub const INPUT_PREPARE_HOST_PLAN: u64 = 0x0004000000000000;
+    pub const INPUT_PREPARE_PROJECTION: u64 = 0x0005000000000000;
+    pub const INPUT_APPROVE_PLAN: u64 = 0x0006000000000000;
+    pub const INPUT_APPLY_PLAN: u64 = 0x0007000000000000;
+    pub const INPUT_RETIRE_ACCOUNT: u64 = 0x0008000000000000;
     pub const OUTPUT_ACCOUNT_REGISTERED: u64 = 0x0100000000000000;
     pub const OUTPUT_CREDENTIAL_ROTATED: u64 = 0x0101000000000000;
     pub const OUTPUT_POLICY_SET: u64 = 0x0102000000000000;
     pub const OUTPUT_PLAN_PREPARED: u64 = 0x0103000000000000;
-    pub const OUTPUT_PLAN_APPROVED: u64 = 0x0104000000000000;
-    pub const OUTPUT_PLAN_APPLIED: u64 = 0x0105000000000000;
-    pub const OUTPUT_ACCOUNT_RETIRED: u64 = 0x0106000000000000;
-    pub const OUTPUT_REQUEST_REJECTED: u64 = 0x0107000000000000;
+    pub const OUTPUT_HOST_PLAN_PREPARED: u64 = 0x0104000000000000;
+    pub const OUTPUT_PLAN_APPROVED: u64 = 0x0105000000000000;
+    pub const OUTPUT_PLAN_APPLIED: u64 = 0x0106000000000000;
+    pub const OUTPUT_ACCOUNT_RETIRED: u64 = 0x0107000000000000;
+    pub const OUTPUT_REQUEST_REJECTED: u64 = 0x0108000000000000;
 }
 
 #[rustfmt::skip]
@@ -1245,6 +1508,7 @@ pub enum InputRoute {
     RotateCredential,
     SetPolicy,
     PreparePlan,
+    PrepareHostPlan,
     PrepareProjection,
     ApprovePlan,
     ApplyPlan,
@@ -1268,6 +1532,7 @@ pub enum OutputRoute {
     CredentialRotated,
     PolicySet,
     PlanPrepared,
+    HostPlanPrepared,
     PlanApproved,
     PlanApplied,
     AccountRetired,
@@ -1282,6 +1547,7 @@ impl Input {
             Self::RotateCredential(_) => InputRoute::RotateCredential,
             Self::SetPolicy(_) => InputRoute::SetPolicy,
             Self::PreparePlan(_) => InputRoute::PreparePlan,
+            Self::PrepareHostPlan(_) => InputRoute::PrepareHostPlan,
             Self::PrepareProjection(_) => InputRoute::PrepareProjection,
             Self::ApprovePlan(_) => InputRoute::ApprovePlan,
             Self::ApplyPlan(_) => InputRoute::ApplyPlan,
@@ -1294,6 +1560,7 @@ impl Input {
             Self::RotateCredential(_) => short_header::INPUT_ROTATE_CREDENTIAL,
             Self::SetPolicy(_) => short_header::INPUT_SET_POLICY,
             Self::PreparePlan(_) => short_header::INPUT_PREPARE_PLAN,
+            Self::PrepareHostPlan(_) => short_header::INPUT_PREPARE_HOST_PLAN,
             Self::PrepareProjection(_) => short_header::INPUT_PREPARE_PROJECTION,
             Self::ApprovePlan(_) => short_header::INPUT_APPROVE_PLAN,
             Self::ApplyPlan(_) => short_header::INPUT_APPLY_PLAN,
@@ -1306,6 +1573,7 @@ impl Input {
             short_header::INPUT_ROTATE_CREDENTIAL => Ok(InputRoute::RotateCredential),
             short_header::INPUT_SET_POLICY => Ok(InputRoute::SetPolicy),
             short_header::INPUT_PREPARE_PLAN => Ok(InputRoute::PreparePlan),
+            short_header::INPUT_PREPARE_HOST_PLAN => Ok(InputRoute::PrepareHostPlan),
             short_header::INPUT_PREPARE_PROJECTION => Ok(InputRoute::PrepareProjection),
             short_header::INPUT_APPROVE_PLAN => Ok(InputRoute::ApprovePlan),
             short_header::INPUT_APPLY_PLAN => Ok(InputRoute::ApplyPlan),
@@ -1364,6 +1632,7 @@ impl Output {
             Self::CredentialRotated(_) => OutputRoute::CredentialRotated,
             Self::PolicySet(_) => OutputRoute::PolicySet,
             Self::PlanPrepared(_) => OutputRoute::PlanPrepared,
+            Self::HostPlanPrepared(_) => OutputRoute::HostPlanPrepared,
             Self::PlanApproved(_) => OutputRoute::PlanApproved,
             Self::PlanApplied(_) => OutputRoute::PlanApplied,
             Self::AccountRetired(_) => OutputRoute::AccountRetired,
@@ -1376,6 +1645,7 @@ impl Output {
             Self::CredentialRotated(_) => short_header::OUTPUT_CREDENTIAL_ROTATED,
             Self::PolicySet(_) => short_header::OUTPUT_POLICY_SET,
             Self::PlanPrepared(_) => short_header::OUTPUT_PLAN_PREPARED,
+            Self::HostPlanPrepared(_) => short_header::OUTPUT_HOST_PLAN_PREPARED,
             Self::PlanApproved(_) => short_header::OUTPUT_PLAN_APPROVED,
             Self::PlanApplied(_) => short_header::OUTPUT_PLAN_APPLIED,
             Self::AccountRetired(_) => short_header::OUTPUT_ACCOUNT_RETIRED,
@@ -1390,6 +1660,7 @@ impl Output {
             short_header::OUTPUT_CREDENTIAL_ROTATED => Ok(OutputRoute::CredentialRotated),
             short_header::OUTPUT_POLICY_SET => Ok(OutputRoute::PolicySet),
             short_header::OUTPUT_PLAN_PREPARED => Ok(OutputRoute::PlanPrepared),
+            short_header::OUTPUT_HOST_PLAN_PREPARED => Ok(OutputRoute::HostPlanPrepared),
             short_header::OUTPUT_PLAN_APPROVED => Ok(OutputRoute::PlanApproved),
             short_header::OUTPUT_PLAN_APPLIED => Ok(OutputRoute::PlanApplied),
             short_header::OUTPUT_ACCOUNT_RETIRED => Ok(OutputRoute::AccountRetired),
@@ -1449,6 +1720,7 @@ impl signal_frame::SignalOperationHeads for Input {
         "RotateCredential",
         "SetPolicy",
         "PreparePlan",
+        "PrepareHostPlan",
         "PrepareProjection",
         "ApprovePlan",
         "ApplyPlan",
