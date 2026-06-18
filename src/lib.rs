@@ -220,6 +220,14 @@ pub struct HostPlanPreparation {
 #[derive(
     Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
 )]
+pub struct HostDestruction {
+    pub provider: Provider,
+    pub host_name: DomainName,
+}
+
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+)]
 pub struct HostPlan {
     pub identifier: PlanIdentifier,
     pub provider: Provider,
@@ -343,6 +351,7 @@ signal_channel! {
         operation SetPolicy(Policy),
         operation PreparePlan(PlanPreparation),
         operation PrepareHostPlan(HostPlanPreparation),
+        operation PrepareHostDestruction(HostDestruction),
         operation PrepareProjection(ProjectionPreparation),
         operation ApprovePlan(Approval),
         operation ApplyPlan(Application),

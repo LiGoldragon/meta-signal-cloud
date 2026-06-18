@@ -41,6 +41,11 @@ pub struct PrepareHostPlan(HostPlanPreparation);
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct PrepareHostDestruction(HostDestruction);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct PrepareProjection(ProjectionPreparation);
 
 #[rustfmt::skip]
@@ -189,6 +194,14 @@ pub struct PlanPreparation(DesiredState);
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct HostPlanPreparation(DesiredHostState);
+
+#[rustfmt::skip]
+#[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HostDestruction {
+    pub provider: Provider,
+    pub host_name: DomainName,
+}
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -500,6 +513,7 @@ pub enum Input {
     SetPolicy(Policy),
     PreparePlan(PlanPreparation),
     PrepareHostPlan(HostPlanPreparation),
+    PrepareHostDestruction(HostDestruction),
     PrepareProjection(ProjectionPreparation),
     ApprovePlan(Approval),
     ApplyPlan(Application),
@@ -612,6 +626,25 @@ impl PrepareHostPlan {
 #[rustfmt::skip]
 impl From<HostPlanPreparation> for PrepareHostPlan {
     fn from(payload: HostPlanPreparation) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl PrepareHostDestruction {
+    pub fn new(payload: HostDestruction) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HostDestruction {
+        &self.0
+    }
+    pub fn into_payload(self) -> HostDestruction {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HostDestruction> for PrepareHostDestruction {
+    fn from(payload: HostDestruction) -> Self {
         Self::new(payload)
     }
 }
@@ -1231,6 +1264,9 @@ impl Input {
     pub fn prepare_host_plan(payload: DesiredHostState) -> Self {
         Self::PrepareHostPlan(HostPlanPreparation::new(payload))
     }
+    pub fn prepare_host_destruction(payload: HostDestruction) -> Self {
+        Self::PrepareHostDestruction(payload)
+    }
     pub fn prepare_projection(payload: ProjectionPreparation) -> Self {
         Self::PrepareProjection(payload)
     }
@@ -1308,6 +1344,13 @@ impl From<PlanPreparation> for Input {
 impl From<HostPlanPreparation> for Input {
     fn from(payload: HostPlanPreparation) -> Self {
         Self::PrepareHostPlan(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl From<HostDestruction> for Input {
+    fn from(payload: HostDestruction) -> Self {
+        Self::PrepareHostDestruction(payload)
     }
 }
 
@@ -1441,10 +1484,11 @@ pub mod short_header {
     pub const INPUT_SET_POLICY: u64 = 0x0002000000000000;
     pub const INPUT_PREPARE_PLAN: u64 = 0x0003000000000000;
     pub const INPUT_PREPARE_HOST_PLAN: u64 = 0x0004000000000000;
-    pub const INPUT_PREPARE_PROJECTION: u64 = 0x0005000000000000;
-    pub const INPUT_APPROVE_PLAN: u64 = 0x0006000000000000;
-    pub const INPUT_APPLY_PLAN: u64 = 0x0007000000000000;
-    pub const INPUT_RETIRE_ACCOUNT: u64 = 0x0008000000000000;
+    pub const INPUT_PREPARE_HOST_DESTRUCTION: u64 = 0x0005000000000000;
+    pub const INPUT_PREPARE_PROJECTION: u64 = 0x0006000000000000;
+    pub const INPUT_APPROVE_PLAN: u64 = 0x0007000000000000;
+    pub const INPUT_APPLY_PLAN: u64 = 0x0008000000000000;
+    pub const INPUT_RETIRE_ACCOUNT: u64 = 0x0009000000000000;
     pub const OUTPUT_ACCOUNT_REGISTERED: u64 = 0x0100000000000000;
     pub const OUTPUT_CREDENTIAL_ROTATED: u64 = 0x0101000000000000;
     pub const OUTPUT_POLICY_SET: u64 = 0x0102000000000000;
@@ -1509,6 +1553,7 @@ pub enum InputRoute {
     SetPolicy,
     PreparePlan,
     PrepareHostPlan,
+    PrepareHostDestruction,
     PrepareProjection,
     ApprovePlan,
     ApplyPlan,
@@ -1548,6 +1593,7 @@ impl Input {
             Self::SetPolicy(_) => InputRoute::SetPolicy,
             Self::PreparePlan(_) => InputRoute::PreparePlan,
             Self::PrepareHostPlan(_) => InputRoute::PrepareHostPlan,
+            Self::PrepareHostDestruction(_) => InputRoute::PrepareHostDestruction,
             Self::PrepareProjection(_) => InputRoute::PrepareProjection,
             Self::ApprovePlan(_) => InputRoute::ApprovePlan,
             Self::ApplyPlan(_) => InputRoute::ApplyPlan,
@@ -1561,6 +1607,9 @@ impl Input {
             Self::SetPolicy(_) => short_header::INPUT_SET_POLICY,
             Self::PreparePlan(_) => short_header::INPUT_PREPARE_PLAN,
             Self::PrepareHostPlan(_) => short_header::INPUT_PREPARE_HOST_PLAN,
+            Self::PrepareHostDestruction(_) => {
+                short_header::INPUT_PREPARE_HOST_DESTRUCTION
+            }
             Self::PrepareProjection(_) => short_header::INPUT_PREPARE_PROJECTION,
             Self::ApprovePlan(_) => short_header::INPUT_APPROVE_PLAN,
             Self::ApplyPlan(_) => short_header::INPUT_APPLY_PLAN,
@@ -1574,6 +1623,9 @@ impl Input {
             short_header::INPUT_SET_POLICY => Ok(InputRoute::SetPolicy),
             short_header::INPUT_PREPARE_PLAN => Ok(InputRoute::PreparePlan),
             short_header::INPUT_PREPARE_HOST_PLAN => Ok(InputRoute::PrepareHostPlan),
+            short_header::INPUT_PREPARE_HOST_DESTRUCTION => {
+                Ok(InputRoute::PrepareHostDestruction)
+            }
             short_header::INPUT_PREPARE_PROJECTION => Ok(InputRoute::PrepareProjection),
             short_header::INPUT_APPROVE_PLAN => Ok(InputRoute::ApprovePlan),
             short_header::INPUT_APPLY_PLAN => Ok(InputRoute::ApplyPlan),
@@ -1721,6 +1773,7 @@ impl signal_frame::SignalOperationHeads for Input {
         "SetPolicy",
         "PreparePlan",
         "PrepareHostPlan",
+        "PrepareHostDestruction",
         "PrepareProjection",
         "ApprovePlan",
         "ApplyPlan",

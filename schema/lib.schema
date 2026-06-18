@@ -4,6 +4,7 @@
  (SetPolicy Policy)
  (PreparePlan PlanPreparation)
  (PrepareHostPlan HostPlanPreparation)
+ (PrepareHostDestruction HostDestruction)
  (PrepareProjection ProjectionPreparation)
  (ApprovePlan Approval)
  (ApplyPlan Application)
@@ -23,6 +24,7 @@
   SetPolicy Policy
   PreparePlan PlanPreparation
   PrepareHostPlan HostPlanPreparation
+  PrepareHostDestruction HostDestruction
   PrepareProjection ProjectionPreparation
   ApprovePlan Approval
   ApplyPlan Application
@@ -46,6 +48,7 @@
   Policy { zones (Vector ZonePolicy) capabilities (Vector CapabilityPolicy) }
   PlanPreparation DesiredState
   HostPlanPreparation DesiredHostState
+  HostDestruction { provider Provider host_name DomainName }
   ProjectionPreparation { provider Provider projection Projection }
   Approval { plan PlanIdentifier }
   Application { plan PlanIdentifier }
