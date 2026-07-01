@@ -6,6 +6,12 @@ rotation, policy changes, plan preparation, and live provider plan
 application. It also accepts provider-neutral projections from `domain-criome`
 and turns them into daemon-held provider plans.
 
+## 0.5 · Direction
+
+`meta-signal-cloud` is the meta authority contract for the `cloud` component. It exists because live provider mutation changes external accounts, paid resources, and public domain identity — those mutation-class verbs must be separated from the ordinary `signal-cloud` read surface by contract and socket boundary. This is a workspace generalization: a component whose state surface reflects an external resource exposes reads on the ordinary contract and mutations on the meta contract.
+
+`PreparePlan` lives here because it mutates daemon-internal plan-store state even though it does not mutate external provider state directly. Provider-specific plan application stays outside this contract: the domain registry decides what should exist; `cloud` decides how a provider applies it.
+
 ## Boundary
 
 The ordinary `signal-cloud` contract can observe and validate
